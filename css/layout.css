@@ -13,7 +13,6 @@ centralizaria o par como grupo, o que estaria errado).
 
 body {
   position: relative;
-  min-height: 100vh;
   background: var(--color-bg);
   font-family: var(--font-body);
   color: var(--color-ink);
