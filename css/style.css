@@ -1,0 +1,210 @@
+/* Tipografia base */
+body {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Cabecalho de perfil (home + curriculum) */
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 32px;
+}
+
+.profile-header h1 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.profile-header .role {
+  display: block;
+  margin-top: 4px;
+  font-size: 15px;
+  color: var(--color-ink-muted);
+  font-weight: 400;
+}
+
+.profile-header .cv-link {
+  color: var(--color-link);
+  font-size: 15px;
+}
+
+/* Bio / paragrafos corridos */
+.bio {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.bio p {
+  color: var(--color-ink);
+}
+
+.contact-line {
+  color: var(--color-ink);
+}
+
+.contact-line .muted-link {
+  color: var(--color-ink-muted);
+}
+
+/* Link em destaque (home) */
+.featured-link {
+  margin-bottom: 40px;
+}
+
+.featured-link .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.featured-link a {
+  color: var(--color-link);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.featured-link .year {
+  color: var(--color-ink-muted);
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.featured-link .subtitle {
+  margin-top: 6px;
+  color: var(--color-ink-muted);
+  font-size: 15px;
+}
+
+/* Rotulo de secao (Galeria, Formacao, Cursos, Experiencia Profissional) */
+.section-label {
+  display: block;
+  color: var(--color-ink-muted);
+  font-size: 15px;
+  margin-bottom: 16px;
+}
+
+/* Galeria (home) */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gallery-gutter);
+}
+
+.thumb {
+  aspect-ratio: 1 / 1;
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius);
+}
+
+/* Artigo */
+.article-header {
+  margin-bottom: 32px;
+}
+
+.article-header h1 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.article-header .subtitle {
+  display: block;
+  margin-top: 6px;
+  font-size: 15px;
+  color: var(--color-ink-muted);
+}
+
+.article-hero {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius);
+}
+
+.article-caption {
+  text-align: center;
+  margin-top: 12px;
+  margin-bottom: 32px;
+  font-size: 13px;
+  color: var(--color-ink-muted);
+}
+
+.article-body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Curriculo */
+.cv-section {
+  margin-bottom: 40px;
+}
+
+.cv-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cv-row + .cv-row {
+  margin-top: 4px;
+}
+
+.cv-row .label {
+  color: var(--color-ink);
+}
+
+.cv-row .date {
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+}
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.course-item .meta {
+  display: block;
+  color: var(--color-ink-muted);
+  font-size: 15px;
+}
+
+.course-item .name {
+  display: block;
+  margin-top: 4px;
+  color: var(--color-ink);
+}
+
+.job-entry {
+  margin-bottom: 32px;
+}
+
+.job-entry .bullets {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.job-entry .bullets li {
+  position: relative;
+  padding-left: 16px;
+  color: var(--color-ink-muted);
+}
+
+.job-entry .bullets li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-ink-muted);
+}

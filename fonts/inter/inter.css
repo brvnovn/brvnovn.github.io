@@ -1,0 +1,18 @@
+/*
+Inter — build oficial (rsms.me/inter), nao a versao empacotada pelo Google Fonts.
+Apenas o variable font e usado (cobre pesos 100-900 num unico arquivo).
+*/
+@font-face {
+  font-family: InterVariable;
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("InterVariable.woff2") format("woff2");
+}
+@font-face {
+  font-family: InterVariable;
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("InterVariable-Italic.woff2") format("woff2");
+}

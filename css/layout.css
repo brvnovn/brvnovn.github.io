@@ -1,0 +1,48 @@
+/*
+Regra de layout (refs/instrucoes_portifolio.md):
+- .main fica SEMPRE centralizado na janela, largura fixa (nao reflui).
+- .aside-menu fica SEMPRE a mesma distancia horizontal de .main (nao do
+  viewport) — os dois se movem juntos ao redimensionar, mas quem centraliza
+  e o .main sozinho, nao o par main+aside.
+- .aside-menu so existe nas subpaginas (article/curriculum).
+
+Por isso .aside-menu e posicionado com `position: absolute`, calculado a
+partir do mesmo centro (50%) que centraliza o .main, em vez de flexbox (que
+centralizaria o par como grupo, o que estaria errado).
+*/
+
+body {
+  position: relative;
+  min-height: 100vh;
+  background: var(--color-bg);
+  font-family: var(--font-body);
+  color: var(--color-ink);
+}
+
+.main {
+  width: var(--main-width);
+  margin-inline: auto;
+  padding-top: var(--main-top);
+  padding-bottom: 96px;
+}
+
+.aside-menu {
+  position: absolute;
+  top: var(--main-top);
+  left: calc(50% - (var(--main-width) / 2) - var(--aside-gap));
+}
+
+.aside-menu ul {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.aside-menu a {
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+}
+
+.aside-menu a:hover {
+  color: var(--color-ink);
+}

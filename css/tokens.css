@@ -1,0 +1,35 @@
+/*
+Valores extraidos por amostragem de pixel dos exports @2x em refs/
+(scripts/extract_tokens.py), nao estimados visualmente. Convertidos para @1x
+(export / 2, ja que os frames do Figma sao de 1280px de largura).
+
+Confirmado nos 3 exports (home/article/curriculum): a coluna .main comeca
+em x=348px e termina em x=931.5px em TODAS as telas, sem variar — ou seja,
+o "main sempre centralizado, largura fixa" do instrucoes_portifolio.md e
+literal, nao aproximado.
+*/
+:root {
+  /* cores (RGB exatos amostrados; sao provavelmente preto em varias opacidades
+     sobre o fundo, mas fixamos como hex resultante) */
+  --color-bg: #fdfdfc;
+  --color-ink: #363636;       /* texto principal */
+  --color-ink-muted: #999999;  /* texto secundario / meta */
+  --color-border: #d9d9d9;    /* contorno de placeholders (galeria, imagem do artigo) */
+  --color-border-soft: #e4e4e3; /* divisores mais sutis */
+  --color-link: #0099ff;
+
+  /* coluna principal — medido, identico nas 3 telas */
+  --main-width: 584px;       /* 583.5px medido */
+  --main-top: 131px;         /* 130.5px medido; distancia do topo da janela ao topo do conteudo */
+
+  /* aside — alinhado ao mesmo --main-top; borda esquerda fica a --aside-gap
+     do lado esquerdo do .main (nao do viewport) */
+  --aside-gap: 236px;
+
+  /* nao medido com precisao de pixel (elementos vazios/placeholder no mock);
+     valores razoaveis, ajustar depois se necessario */
+  --gallery-gutter: 24px;
+  --radius: 8px;
+
+  --font-body: "InterVariable", system-ui, sans-serif;
+}
