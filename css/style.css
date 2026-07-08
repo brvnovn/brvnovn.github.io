@@ -20,14 +20,14 @@ body {
 .profile-header .role {
   display: block;
   margin-top: 4px;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--color-ink-muted);
   font-weight: 400;
 }
 
 .profile-header .cv-link {
   color: var(--color-link);
-  font-size: 15px;
+  font-size: 16px;
 }
 
 /* Bio / paragrafos corridos */
@@ -70,21 +70,21 @@ body {
 
 .featured-link .year {
   color: var(--color-ink-muted);
-  font-size: 15px;
+  font-size: 16px;
   white-space: nowrap;
 }
 
 .featured-link .subtitle {
-  margin-top: 6px;
+  margin-top: 8px;
   color: var(--color-ink-muted);
-  font-size: 15px;
+  font-size: 16px;
 }
 
 /* Rotulo de secao (Galeria, Formacao, Cursos, Experiencia Profissional) */
 .section-label {
   display: block;
   color: var(--color-ink-muted);
-  font-size: 15px;
+  font-size: 16px;
   margin-bottom: 16px;
 }
 
@@ -107,14 +107,14 @@ body {
 }
 
 .article-header h1 {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 600;
 }
 
 .article-header .subtitle {
   display: block;
-  margin-top: 6px;
-  font-size: 15px;
+  margin-top: 8px;
+  font-size: 16px;
   color: var(--color-ink-muted);
 }
 
@@ -129,7 +129,7 @@ body {
   text-align: center;
   margin-top: 12px;
   margin-bottom: 32px;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--color-ink-muted);
 }
 
@@ -172,7 +172,7 @@ body {
 .course-item .meta {
   display: block;
   color: var(--color-ink-muted);
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .course-item .name {
@@ -202,7 +202,7 @@ body {
   content: "";
   position: absolute;
   left: 0;
-  top: 10px;
+  top: 8px;
   width: 4px;
   height: 4px;
   border-radius: 50%;
