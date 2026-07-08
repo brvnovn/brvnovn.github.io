@@ -58,7 +58,7 @@ body {
 .featured-link a {
   display: block;
   color: var(--color-link);
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
 }
 
@@ -72,7 +72,7 @@ body {
 .section-label {
   display: block;
   color: var(--color-ink-muted);
-  font-size: 16px;
+  font-size: 20px;
   margin-bottom: 16px;
 }
 
