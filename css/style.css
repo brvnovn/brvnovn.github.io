@@ -183,6 +183,7 @@ body {
 .job-entry .bullets li {
   position: relative;
   padding-left: 16px;
+  font-size: 14px;
   color: var(--color-ink-muted);
 }
 
