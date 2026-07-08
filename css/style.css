@@ -55,23 +55,11 @@ body {
   margin-bottom: 40px;
 }
 
-.featured-link .row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 16px;
-}
-
 .featured-link a {
+  display: block;
   color: var(--color-link);
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 500;
-}
-
-.featured-link .year {
-  color: var(--color-ink-muted);
-  font-size: 16px;
-  white-space: nowrap;
 }
 
 .featured-link .subtitle {
