@@ -1,0 +1,16 @@
+# dependências / build
+node_modules/
+dist/
+
+# SO
+.DS_Store
+Thumbs.db
+
+# editor / tooling
+.vscode/
+.idea/
+.claude/
+
+# refs de trabalho (não fazem parte do site publicado)
+refs/
+imagens/
