@@ -1,0 +1,679 @@
+/* ============================================================
+   Bruno Vieira — Portfólio
+   Grid: 12 col · margem 48 · gutter 24  (ref Figma Desktop 1440)
+   ============================================================ */
+
+:root {
+  --bg: #f2f2f0;
+  --fg: #111110;
+  --blue: #2f80ed;
+  --placeholder: #d4d4d2;
+  --placeholder-hover: #c9c9c6;
+
+  --margin: 144px; /* margem tripla (48 × 3) */
+  --gutter: 24px;
+
+  /* referência máxima 1920×1080; nesse ponto card-size ≈ 446px */
+  --name-fs: clamp(40px, 5vw, 88px);
+
+  /* Card 1:1. Mostra 3 inteiras + 1 pela metade (3.5 visíveis, 3 gutters),
+     sinalizando que há mais para arrastar. */
+  --card-size: clamp(160px, calc((100vw - 2 * var(--margin) - 3 * var(--gutter)) / 3.5), 520px);
+
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: 16px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow: hidden; /* a página não rola; o carrossel sim */
+}
+
+a { color: inherit; text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--fg);
+  color: var(--bg);
+  padding: 8px 16px;
+  z-index: 100;
+}
+.skip-link:focus { left: var(--margin); top: 12px; }
+
+/* ============ FRAME / GRID GERAL ============ */
+.frame {
+  height: 100vh;
+  min-height: 100vh;
+  padding: var(--margin) var(--margin) 0; /* sem margem inferior */
+  display: grid;
+  grid-template-rows: auto 1fr;
+  row-gap: clamp(32px, 6vh, 88px);
+}
+
+/* ============ HEADER ============ */
+/* Colunas do tamanho do card => cada bloco alinha à esquerda da respectiva
+   imagem do carrossel (name↔card1, bio-a↔card2, bio-b↔card3). */
+.site-header {
+  display: grid;
+  grid-template-columns: repeat(3, var(--card-size));
+  column-gap: var(--gutter);
+  align-items: start;
+}
+
+/* logo + nome juntos, logo à esquerda (col 1, alinha com card 1) */
+.identity {
+  grid-column: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(12px, 1.2vw, 22px);
+}
+
+.name {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: var(--name-fs);
+  line-height: 0.86;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.bio {
+  margin: 0;
+  padding-top: 0.35em;
+  /* largura um pouco maior que a versão mobile */
+  max-width: 26ch;
+}
+.bio p { margin: 0 0 1.2em; }
+.bio--a { grid-column: 2; }
+.bio--b { grid-column: 3; }
+.bio-link,
+.bio-links { margin-top: 0; }
+.bio-links a { margin-right: 0.4em; }
+
+/* links em azul (Currículo, Linkedin/WhatsApp/Email) */
+.bio-link a,
+.bio-links a { color: var(--blue); }
+
+.logo {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  display: block;
+  color: var(--fg);
+  aspect-ratio: 180 / 200;
+  /* altura da palavra "BRUNO" (1 linha); ajustada exatamente via JS */
+  height: calc(var(--name-fs) * 0.86);
+  transition: transform 0.6s var(--ease);
+}
+.logo svg { width: 100%; height: 100%; display: block; }
+.logo:hover { transform: rotate(60deg); }
+
+/* ============ CARROSSEL ============ */
+main {
+  min-width: 0; /* impede o flex track de esticar o grid item */
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.carousel {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  /* topo fixo: capas de alturas diferentes não deslocam o carrossel */
+  justify-content: flex-start;
+}
+
+.carousel__viewport {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.carousel__track {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gutter);
+  will-change: transform;
+  transition: transform 0.525s var(--ease); /* 25% mais rápido (0.7 → 0.525s) */
+}
+
+.card {
+  flex: 0 0 auto;
+  width: var(--card-size);
+  display: flex;
+  flex-direction: column;
+}
+
+.card__media {
+  display: block;
+  width: 100%;
+  border: none;
+  padding: 0;
+  background: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  font: inherit;
+}
+.card__media:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+
+.card__media > img {
+  width: 100%;
+  height: auto; /* altura natural — sem moldura/letterbox */
+  display: block;
+  transition: transform 0.8s var(--ease);
+}
+.card__media:hover > img { transform: scale(1.03); }
+
+/* capa de mosaico: preview parcial da grade (prévia), com fade embaixo */
+.card__mosaic-preview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  aspect-ratio: 5 / 4;
+  overflow: hidden;
+  align-content: start;
+  -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent);
+  mask-image: linear-gradient(to bottom, #000 70%, transparent);
+  transition: transform 0.6s var(--ease);
+}
+.card__mosaic-preview img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+.card__media:hover .card__mosaic-preview { transform: scale(1.02); }
+
+.card__label {
+  margin-bottom: 14px; /* título acima do quadrado */
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+
+/* setas de navegação — acima do carrossel, pouco acima dos nomes */
+.carousel__controls {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-start;
+  gap: 2px;
+  margin-bottom: 18px;
+  margin-left: -10px; /* alinha o glifo à esquerda do carrossel (compensa o padding do botão) */
+}
+.carousel__arrow {
+  background: none;
+  border: none;
+  color: var(--fg);
+  font-size: 24px;
+  line-height: 1;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+}
+.carousel__arrow:disabled { opacity: 0.2; cursor: default; }
+.carousel__arrow:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+.carousel__arrow--prev:hover { transform: translateX(-3px); }
+.carousel__arrow--next:hover { transform: translateX(3px); }
+
+/* ============ OVERLAY ============ */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(var(--margin), 96px) var(--margin) var(--margin); /* topo livre para o cabeçalho */
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+}
+.overlay:not([hidden]) { opacity: 1; }
+.overlay[hidden] { display: none; }
+
+.overlay__figure {
+  margin: 0;
+  max-width: min(1100px, 90vw);
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.overlay__media {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.overlay__media img {
+  max-width: 100%;
+  max-height: 76vh;
+  object-fit: contain;
+  display: block;
+}
+.overlay__caption {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+.overlay__caption[hidden] { display: none; }
+.overlay__caption--center { justify-content: center; }
+.overlay__count {
+  color: var(--fg);
+  opacity: 0.5;
+  white-space: nowrap;
+}
+
+/* setas internas: navegam entre as imagens do mesmo projeto */
+.overlay__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--fg);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+}
+.overlay__nav--prev { left: 12px; }
+.overlay__nav--next { right: 12px; }
+.overlay__nav--prev:hover { transform: translate(-4px, -50%); }
+.overlay__nav--next:hover { transform: translate(4px, -50%); }
+.overlay__nav:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+.overlay__nav[hidden] { display: none; }
+/* reset de aparência dos botões de ícone (evita borda/quadrado no mobile) */
+.overlay__close,
+.overlay__nav,
+.mosaic__close,
+.project__close,
+.carousel__arrow {
+  appearance: none;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+/* sem anel de foco quando focado por toque/programa (só no teclado) */
+.overlay__close:focus:not(:focus-visible),
+.overlay__nav:focus:not(:focus-visible),
+.mosaic__close:focus:not(:focus-visible),
+.project__close:focus:not(:focus-visible),
+.carousel__arrow:focus:not(:focus-visible) {
+  outline: none;
+}
+/* container de diálogo focável não mostra borda */
+.mosaic:focus,
+.project:focus,
+.overlay:focus { outline: none; }
+
+.overlay__close {
+  position: absolute;
+  top: 28px;
+  right: 28px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--fg);
+  font-size: 34px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+.overlay__close:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+
+/* ============ OVERLAY — PÁGINA ============
+   Projetos com mais de uma imagem (exceto mosaicos): abre como uma
+   página de rolagem vertical, com título no topo e as imagens
+   empilhadas em largura cheia, uma após a outra. */
+.project {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: var(--bg);
+  overflow-y: auto; /* a página inteira rola; o cabeçalho fica fixo no topo */
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+}
+.project:not([hidden]) { opacity: 1; }
+.project[hidden] { display: none; }
+
+.project__header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  /* mesma largura da coluna de imagens: título alinha à borda da 1ª imagem */
+  width: min(1400px, 100% - 2 * var(--margin));
+  margin: 0 auto;
+  padding: 28px 0 12px;
+}
+.project__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+.project__close {
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  margin-right: -12px; /* alinha o glifo à margem direita */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--fg);
+  font-size: 34px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+.project__close:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+
+.project__scroll {
+  padding: 12px var(--margin) var(--margin);
+}
+
+.project__list {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 1400px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gutter);
+}
+.project__list img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* overlay de imagem única: mesmo cabeçalho da página, fixo no topo */
+.overlay__header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: none;
+}
+
+/* ============ OVERLAY — MOSAICO ============
+   Formato novo (separado do overlay padrão acima): grade de várias
+   artes de social media, 4 por linha. Usa peças de projetos do tipo
+   `mosaic`. Reaproveita .overlay__figure/__media/__nav/__caption para
+   a visualização ampliada de uma peça, mas o container é próprio. */
+.mosaic {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+}
+.mosaic:not([hidden]) { opacity: 1; }
+.mosaic[hidden] { display: none; }
+
+.mosaic__header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px var(--margin) 0;
+}
+.mosaic__close {
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  margin-right: -12px; /* alinha o glifo à margem direita */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--fg);
+  font-size: 34px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+.mosaic__close:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+
+.mosaic__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 24px var(--margin) 48px;
+}
+
+.mosaic__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--gutter);
+}
+.mosaic__tile {
+  aspect-ratio: 1 / 1;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: var(--placeholder);
+  cursor: pointer;
+  overflow: hidden;
+  width: 100%;
+  display: block;
+}
+.mosaic__tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s var(--ease);
+}
+.mosaic__tile:hover img { transform: scale(1.04); }
+.mosaic__tile:focus-visible { outline: 2px solid var(--fg); outline-offset: -2px; }
+
+/* zoom de uma peça — sobrepõe a grade, dentro do mesmo container */
+.mosaic__zoom {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--margin);
+}
+.mosaic__zoom[hidden] { display: none; }
+.mosaic__back {
+  background: none;
+  border: none;
+  color: var(--fg);
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  padding: 0;
+}
+.mosaic__back:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+@media (max-width: 860px) {
+  .mosaic__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ============ RESPONSIVO ============ */
+@media (max-width: 860px) {
+  :root {
+    --margin: 24px; /* margem lateral enxuta no mobile */
+    --name-fs: min(20vw, 92px); /* nome maior no topo */
+    /* card ocupa ao menos 75% da largura da tela (com peek da próxima) */
+    --card-size: max(75vw, calc((100vw - 2 * var(--margin) - var(--gutter)) / 1.5));
+  }
+  body { overflow: auto; }
+  .frame {
+    height: auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding-top: calc(var(--margin) * 3); /* respiro superior triplicado */
+    padding-bottom: calc(var(--margin) * 2); /* respiro inferior (2× a margem) */
+  }
+
+  .site-header {
+    grid-template-columns: 1fr;
+    row-gap: 28px;
+  }
+  .identity { grid-column: 1; }
+  .bio--a, .bio--b { grid-column: 1; }
+
+  /* logo não aparece no mobile */
+  .logo { display: none; }
+
+  .carousel { justify-content: flex-start; }
+  .carousel__viewport { overflow: visible; }
+  .carousel__track {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    transition: none;
+  }
+  .card { scroll-snap-align: start; }
+  .carousel__controls { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============ LAYOUT EM MOSAICO ============
+   Os cards formam uma galeria em colunas (estilo "masonry") que ocupa
+   toda a largura útil; a página rola na vertical. Ativado pela classe
+   .layout-grid no <body> — sem ela, volta o carrossel horizontal. */
+
+.layout-grid {
+  --cols: 5;
+  overflow: auto; /* a página rola (no carrossel ela era travada) */
+}
+
+.layout-grid .frame {
+  height: auto;
+  padding-bottom: var(--margin);
+}
+
+/* header nas mesmas colunas da galeria: cada bloco alinha a uma coluna */
+.layout-grid .site-header {
+  grid-template-columns: repeat(var(--cols), 1fr);
+}
+
+/* sem setas: a navegação é a própria rolagem */
+.layout-grid .carousel__controls { display: none; }
+.layout-grid .carousel__viewport { overflow: visible; }
+
+/* galeria: colunas de mesma largura, cada card com a altura natural da imagem.
+   O script distribui os cards nas colunas (.grid-col) em rodízio, para a
+   ordem ler da esquerda para a direita. */
+.layout-grid .carousel__track {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gutter);
+  transform: none !important;
+  transition: none;
+  overflow: visible;
+  scroll-snap-type: none;
+}
+
+.layout-grid .grid-col {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.layout-grid .grid-col__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.layout-grid .card {
+  width: auto;
+  margin-bottom: calc(var(--gutter) * 2);
+}
+
+/* com 5 colunas estreitas o nome não cabe em uma: ocupa 2, bios nas seguintes */
+@media (min-width: 1401px) {
+  .layout-grid .identity { grid-column: 1 / span 2; }
+  .layout-grid .bio--a { grid-column: 3; }
+  .layout-grid .bio--b { grid-column: 4; }
+}
+
+@media (max-width: 1400px) {
+  .layout-grid { --cols: 4; }
+}
+
+@media (max-width: 1100px) {
+  .layout-grid { --cols: 3; }
+}
+
+@media (max-width: 860px) {
+  .layout-grid { --cols: 2; }
+  .layout-grid .site-header { grid-template-columns: 1fr; }
+  .layout-grid .frame { padding-bottom: calc(var(--margin) * 2); }
+}
+
+@media (max-width: 520px) {
+  .layout-grid { --cols: 1; }
+}
