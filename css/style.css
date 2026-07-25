@@ -151,6 +151,10 @@ body {
   white-space: nowrap;
 }
 
+.job-entry .date {
+  font-size: 14px;
+}
+
 .courses-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
