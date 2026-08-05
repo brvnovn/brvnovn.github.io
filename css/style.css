@@ -76,23 +76,54 @@ body {
   margin-bottom: 16px;
 }
 
-/* Galeria (home) */
+/* Galeria (home) — flex em vez de grid: quando um card expande (flex-basis
+   100%), o outro quebra pra linha de baixo sozinho, sem CSS Grid reposicionar
+   itens (o que empurraria a borda esquerda do card expandido). */
 .gallery-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
   gap: var(--gallery-gutter);
 }
 
 .card {
-  display: block;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  padding: 0;
+  position: relative;
+  flex: 0 1 calc((100% - var(--gallery-gutter)) / 2);
   border: 1px solid var(--color-border-soft);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-  background: none;
   overflow: hidden;
+}
+
+.card:not(.card--expanded) {
+  aspect-ratio: 1 / 1;
+}
+
+.card--expanded {
+  flex-basis: 100%;
+}
+
+/* Projeto 1: a arte e mais larga que alta (1280x720). Em vez de recortar as
+   laterais (object-fit: cover), mostramos a largura inteira e preenchemos as
+   sobras de cima/baixo com a mesma cor de fundo da arte. */
+.card[data-project="1"] {
+  background: #edebed;
+}
+
+.card[data-project="1"] .card-cover {
+  object-fit: contain;
+}
+
+.card-trigger {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
   cursor: pointer;
+}
+
+.card-trigger[hidden] {
+  display: none;
 }
 
 .card-cover {
@@ -102,69 +133,48 @@ body {
   display: block;
 }
 
-/* Modal de projeto (video + info) */
-.project-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
+/* Conteudo expandido do card (video + info), no fluxo da pagina */
+.card-content {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 32px;
+  padding: 32px;
 }
 
-.project-modal[hidden] {
+.card-content[hidden] {
   display: none;
 }
 
-.project-modal__backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-}
-
-.project-modal__panel {
-  position: relative;
-  display: flex;
-  align-items: stretch;
-  gap: 32px;
-  width: calc(100% - 64px);
-  max-width: 960px;
-  padding: 32px;
-  background: var(--color-bg);
-}
-
-.project-modal__media {
-  flex: 1 1 60%;
+.card-content__media {
+  flex: 1 1 65%;
   aspect-ratio: 16 / 9;
   background: #000;
 }
 
-.project-modal__video,
-.project-modal__video iframe {
+.card-content__media iframe {
   width: 100%;
   height: 100%;
   border: 0;
   display: block;
 }
 
-.project-modal__info {
-  flex: 1 1 40%;
+.card-content__info {
+  flex: 1 1 35%;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.project-modal__title {
+.card-content__title {
   font-size: 20px;
   font-weight: 600;
 }
 
-.project-modal__description {
+.card-content__description {
   font-size: 16px;
   color: var(--color-ink-muted);
 }
 
-.project-modal__close {
+.card-content__close {
   position: absolute;
   top: 12px;
   right: 12px;

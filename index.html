@@ -41,29 +41,39 @@
     <section>
       <span class="section-label">Acervo</span>
       <div class="gallery-grid">
-        <button type="button" class="card" data-project="1">
-          <img class="card-cover" src="img/acervo/projeto-1.gif" alt="Projeto 1">
-        </button>
-        <button type="button" class="card" data-project="2">
-          <img class="card-cover" src="img/acervo/projeto-2.gif" alt="Projeto 2">
-        </button>
+        <div class="card" data-project="1">
+          <button type="button" class="card-trigger">
+            <img class="card-cover" src="img/acervo/projeto-1.gif" alt="Projeto 1">
+          </button>
+          <div class="card-content" hidden>
+            <div class="card-content__media">
+              <iframe data-src="https://www.youtube.com/embed/g4_J1kwCj9I" title="Projeto 1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="card-content__info">
+              <h3 class="card-content__title">Projeto 1</h3>
+              <p class="card-content__description">Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            </div>
+            <button type="button" class="card-content__close" aria-label="Fechar">✕</button>
+          </div>
+        </div>
+        <div class="card" data-project="2">
+          <button type="button" class="card-trigger">
+            <img class="card-cover" src="img/acervo/projeto-2.gif" alt="Projeto 2">
+          </button>
+          <div class="card-content" hidden>
+            <div class="card-content__media">
+              <iframe data-src="https://www.youtube.com/embed/u5GHq7VS1ZI" title="Projeto 2" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="card-content__info">
+              <h3 class="card-content__title">Projeto 2</h3>
+              <p class="card-content__description">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            </div>
+            <button type="button" class="card-content__close" aria-label="Fechar">✕</button>
+          </div>
+        </div>
       </div>
     </section>
   </main>
-
-  <div class="project-modal" id="project-modal" hidden>
-    <div class="project-modal__backdrop" data-close></div>
-    <div class="project-modal__panel">
-      <button type="button" class="project-modal__close" data-close aria-label="Fechar">✕</button>
-      <div class="project-modal__media">
-        <div class="project-modal__video" data-video-slot></div>
-      </div>
-      <div class="project-modal__info">
-        <h2 class="project-modal__title"></h2>
-        <p class="project-modal__description"></p>
-      </div>
-    </div>
-  </div>
 
   <script src="js/acervo.js" defer></script>
 </body>

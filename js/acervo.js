@@ -1,51 +1,28 @@
-const PROJECTS = {
-  "1": {
-    title: "Projeto 1",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    // TODO: colar aqui o link embed do YouTube (https://www.youtube.com/embed/...)
-    embedUrl: "",
-  },
-  "2": {
-    title: "Projeto 2",
-    description: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    // TODO: colar aqui o link embed do YouTube (https://www.youtube.com/embed/...)
-    embedUrl: "",
-  },
-};
+const cards = document.querySelectorAll(".card");
 
-const modal = document.getElementById("project-modal");
-const videoSlot = modal.querySelector("[data-video-slot]");
-const titleEl = modal.querySelector(".project-modal__title");
-const descriptionEl = modal.querySelector(".project-modal__description");
+function expand(card) {
+  cards.forEach((other) => {
+    if (other !== card) collapse(other);
+  });
 
-function openProject(id) {
-  const project = PROJECTS[id];
-  if (!project) return;
+  const iframe = card.querySelector(".card-content__media iframe");
+  iframe.src = iframe.dataset.src;
 
-  titleEl.textContent = project.title;
-  descriptionEl.textContent = project.description;
-  videoSlot.innerHTML = project.embedUrl
-    ? `<iframe src="${project.embedUrl}" title="${project.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
-    : "";
-
-  modal.hidden = false;
-  document.body.style.overflow = "hidden";
+  card.querySelector(".card-trigger").hidden = true;
+  card.querySelector(".card-content").hidden = false;
+  card.classList.add("card--expanded");
 }
 
-function closeProject() {
-  modal.hidden = true;
-  videoSlot.innerHTML = "";
-  document.body.style.overflow = "";
+function collapse(card) {
+  const iframe = card.querySelector(".card-content__media iframe");
+  iframe.src = "about:blank";
+
+  card.querySelector(".card-trigger").hidden = false;
+  card.querySelector(".card-content").hidden = true;
+  card.classList.remove("card--expanded");
 }
 
-document.querySelectorAll(".card").forEach((card) => {
-  card.addEventListener("click", () => openProject(card.dataset.project));
-});
-
-modal.querySelectorAll("[data-close]").forEach((el) => {
-  el.addEventListener("click", closeProject);
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && !modal.hidden) closeProject();
+cards.forEach((card) => {
+  card.querySelector(".card-trigger").addEventListener("click", () => expand(card));
+  card.querySelector(".card-content__close").addEventListener("click", () => collapse(card));
 });
