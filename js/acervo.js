@@ -34,22 +34,74 @@ function animateResize(card, applyDomChanges, cleanupAfter) {
   }, TRANSITION_MS);
 }
 
+// --- YouTube IFrame Player API ---------------------------------------
+// Usamos a API (em vez de <iframe src="..."> estatico) so pra poder pedir
+// qualidade 1080p via setPlaybackQuality(). Aviso: o YouTube descontinuou
+// o respeito a esse pedido ha alguns anos — o player escolhe a resolucao
+// sozinho (tamanho do player + banda do visitante) e pode ignorar; isso e
+// so um "melhor esforco", nao uma garantia.
+const players = new Map(); // card -> YT.Player
+let youtubeApiReady = false;
+const pendingPlayerInits = [];
+
+window.onYouTubeIframeAPIReady = () => {
+  youtubeApiReady = true;
+  pendingPlayerInits.splice(0).forEach((init) => init());
+};
+
+const ytApiScript = document.createElement("script");
+ytApiScript.src = "https://www.youtube.com/iframe_api";
+document.head.appendChild(ytApiScript);
+
+function forceHighQuality(player) {
+  player.setPlaybackQuality("hd1080");
+}
+
+function ensurePlayer(card, onReady) {
+  if (players.has(card)) {
+    onReady(players.get(card));
+    return;
+  }
+
+  const target = card.querySelector(".card-content__player");
+  const videoId = target?.dataset.videoId;
+  if (!videoId) return; // card sem video ainda
+
+  const init = () => {
+    const player = new YT.Player(target, {
+      videoId,
+      width: "1280",
+      height: "720",
+      playerVars: { autoplay: 1, mute: 1, playsinline: 1 },
+      events: {
+        onReady: (e) => {
+          forceHighQuality(e.target);
+          onReady(e.target);
+        },
+        onPlaybackQualityChange: (e) => forceHighQuality(e.target),
+      },
+    });
+    players.set(card, player);
+  };
+
+  if (youtubeApiReady) init();
+  else pendingPlayerInits.push(init);
+}
+
 function expand(card) {
   cards.forEach((other) => {
     if (other !== card && other.classList.contains("card--expanded")) collapse(other);
   });
 
   animateResize(card, () => {
-    const iframe = card.querySelector(".card-content__media iframe");
-    // autoplay do YouTube exige o video mudo ao iniciar (politica dos
-    // navegadores); o visitante pode ativar o som pelos controles do player.
-    // Cards sem data-src ainda (conteudo por vir) simplesmente nao carregam nada.
-    if (iframe.dataset.src) {
-      iframe.src = `${iframe.dataset.src}?autoplay=1&mute=1`;
-    }
     card.querySelector(".card-trigger").hidden = true;
     card.querySelector(".card-content").hidden = false;
     card.classList.add("card--expanded");
+
+    ensurePlayer(card, (player) => {
+      player.playVideo();
+      forceHighQuality(player);
+    });
   });
 
   card.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
@@ -64,7 +116,8 @@ function collapse(card) {
       card.querySelector(".card-content").hidden = true;
     },
     () => {
-      card.querySelector(".card-content__media iframe").src = "about:blank";
+      const player = players.get(card);
+      if (player && typeof player.pauseVideo === "function") player.pauseVideo();
     }
   );
 }
