@@ -68,26 +68,74 @@ body {
   font-size: 16px;
 }
 
-/* Rotulo de secao (Galeria, Formacao, Cursos, Experiencia Profissional) */
+/* Rotulo de secao (Galeria, Formacao, Cursos, Experiencia Profissional) —
+   mesmo estilo adotado para os titulos de projeto dos cards do Acervo. */
 .section-label {
   display: block;
-  color: var(--color-ink-muted);
-  font-size: 20px;
+  color: var(--color-ink);
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
   margin-bottom: 16px;
 }
 
-/* Galeria (home) — flex em vez de grid: quando um card expande (flex-basis
-   100%), o outro quebra pra linha de baixo sozinho, sem CSS Grid reposicionar
-   itens (o que empurraria a borda esquerda do card expandido). */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.section-header .section-label {
+  margin-bottom: 0;
+}
+
+.carousel-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.carousel-nav__btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-ink-muted);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.carousel-nav__btn:hover:not(:disabled) {
+  color: var(--color-ink);
+}
+
+.carousel-nav__btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* Galeria (home) — carrossel: uma unica linha, sem quebra, com scroll
+   horizontal. O container fica preso a largura de .main (584px); os cards
+   podem exceder essa largura, ai e so rolar (pelas setas ou por gesto). */
 .gallery-grid {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  align-items: flex-start;
   gap: var(--gallery-gutter);
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.gallery-grid::-webkit-scrollbar {
+  display: none;
 }
 
 .card {
   position: relative;
-  flex: 0 1 calc((100% - var(--gallery-gutter)) / 2);
+  flex: 0 0 280px;
+  scroll-snap-align: start;
   border: 1px solid var(--color-border-soft);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
   overflow: hidden;
@@ -101,14 +149,11 @@ body {
 }
 
 .card--expanded {
-  /* triplica a largura da capa (584px -> ate 1752px), mas nunca deixa o card
-     ultrapassar a borda direita da janela: a borda esquerda fica fixa (main
-     e centralizado), entao so ha espaco disponivel igual a margem direita
-     de main, que e (100vw - main-width) / 2.
-     flex-shrink:0 e essencial aqui: sem isso o flexbox encolhe o item de
-     volta para caber dentro de .main (584px), que e mais estreito que o
-     flex-basis calculado, e o "breakout" nunca acontece. */
-  flex: 0 0 min(calc(var(--main-width) * 3), calc((var(--main-width) / 2) + 50vw - 24px));
+  /* triplica a largura da capa (280px -> ate 840px). Como .gallery-grid
+     agora rola horizontalmente dentro de .main, o card nao precisa mais se
+     preocupar em nao ultrapassar a borda da janela — ele so fica maior que
+     a "vitrine" visivel e da pra rolar ate ele. */
+  flex: 0 0 min(840px, 90vw);
 }
 
 /* Projeto 1 (LogIA): a arte e mais larga que alta (1280x720). Em vez de

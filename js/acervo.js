@@ -51,6 +51,8 @@ function expand(card) {
     card.querySelector(".card-content").hidden = false;
     card.classList.add("card--expanded");
   });
+
+  card.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
 }
 
 function collapse(card) {
@@ -70,4 +72,36 @@ function collapse(card) {
 cards.forEach((card) => {
   card.querySelector(".card-trigger").addEventListener("click", () => expand(card));
   card.querySelector(".card-content__close").addEventListener("click", () => collapse(card));
+});
+
+// Setas do carrossel: cada par de botoes (prev/next) aponta pra um
+// #id de carrossel via data-carousel-target, e desloca a rolagem por
+// "um card + gap" a cada clique.
+const carouselGap = parseFloat(
+  getComputedStyle(document.documentElement).getPropertyValue("--gallery-gutter")
+);
+
+document.querySelectorAll("[data-carousel-target]").forEach((btn) => {
+  const track = document.getElementById(btn.dataset.carouselTarget);
+  const direction = Number(btn.dataset.direction);
+
+  btn.addEventListener("click", () => {
+    const cardWidth = track.querySelector(".card").getBoundingClientRect().width;
+    track.scrollBy({ left: direction * (cardWidth + carouselGap), behavior: "smooth" });
+  });
+});
+
+function updateCarouselNav(track) {
+  const buttons = document.querySelectorAll(`[data-carousel-target="${track.id}"]`);
+  const maxScroll = track.scrollWidth - track.clientWidth;
+  buttons.forEach((btn) => {
+    const direction = Number(btn.dataset.direction);
+    btn.disabled = direction < 0 ? track.scrollLeft <= 0 : track.scrollLeft >= maxScroll - 1;
+  });
+}
+
+document.querySelectorAll(".gallery-grid[id]").forEach((track) => {
+  updateCarouselNav(track);
+  track.addEventListener("scroll", () => updateCarouselNav(track));
+  window.addEventListener("resize", () => updateCarouselNav(track));
 });

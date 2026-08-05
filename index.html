@@ -39,8 +39,14 @@
     </section>
 
     <section>
-      <span class="section-label">Acervo</span>
-      <div class="gallery-grid">
+      <div class="section-header">
+        <span class="section-label">Acervo</span>
+        <div class="carousel-nav">
+          <button type="button" class="carousel-nav__btn" data-carousel-target="acervo-carousel" data-direction="-1" aria-label="Projetos anteriores">←</button>
+          <button type="button" class="carousel-nav__btn" data-carousel-target="acervo-carousel" data-direction="1" aria-label="Próximos projetos">→</button>
+        </div>
+      </div>
+      <div class="gallery-grid" id="acervo-carousel">
         <div class="card" data-project="3">
           <button type="button" class="card-trigger"></button>
           <div class="card-content" hidden>
