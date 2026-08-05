@@ -68,25 +68,188 @@ body {
   font-size: 16px;
 }
 
-/* Rotulo de secao (Galeria, Formacao, Cursos, Experiencia Profissional) */
+/* Rotulo de secao (Galeria, Formacao, Cursos, Experiencia Profissional) —
+   mesmo estilo adotado para os titulos de projeto dos cards do Acervo. */
 .section-label {
   display: block;
-  color: var(--color-ink-muted);
-  font-size: 20px;
+  color: var(--color-ink);
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
   margin-bottom: 16px;
 }
 
-/* Galeria (home) */
-.gallery-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--gallery-gutter);
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
 }
 
-.thumb {
-  aspect-ratio: 1 / 1;
+.section-header .section-label {
+  margin-bottom: 0;
+}
+
+.carousel-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.carousel-nav__btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-ink-muted);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.carousel-nav__btn:hover:not(:disabled) {
+  color: var(--color-ink);
+}
+
+.carousel-nav__btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* Galeria (home) — carrossel: uma unica linha, sem quebra, com scroll
+   horizontal. O container fica preso a largura de .main (584px); os cards
+   podem exceder essa largura, ai e so rolar (pelas setas ou por gesto). */
+.gallery-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: var(--gallery-gutter);
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.gallery-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.card {
+  position: relative;
+  flex: 0 0 280px;
+  scroll-snap-align: start;
   border: 1px solid var(--color-border-soft);
-  border-radius: var(--radius);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  /* a largura/altura reais da transicao sao setadas via JS (px explicitos)
+     durante a animacao; isso so precisa existir para o transition pegar. */
+  transition: flex-basis 0.35s ease, height 0.35s ease;
+}
+
+.card:not(.card--expanded) {
+  aspect-ratio: 1 / 1;
+}
+
+.card--expanded {
+  /* triplica a largura da capa (280px -> ate 840px). Como .gallery-grid
+     agora rola horizontalmente dentro de .main, o card nao precisa mais se
+     preocupar em nao ultrapassar a borda da janela — ele so fica maior que
+     a "vitrine" visivel e da pra rolar ate ele. */
+  flex: 0 0 min(840px, 90vw);
+}
+
+/* Projeto 1 (LogIA): a arte e mais larga que alta (1280x720). Em vez de
+   recortar as laterais (object-fit: cover), mostramos a largura inteira e
+   preenchemos as sobras de cima/baixo com a mesma cor de fundo da arte. */
+.card[data-project="1"] {
+  background: #edebed;
+}
+
+.card[data-project="1"] .card-cover {
+  object-fit: contain;
+}
+
+/* ...mas expandido (video + info) volta a ser branco, como os outros cards */
+.card[data-project="1"].card--expanded {
+  background: var(--color-bg);
+}
+
+.card-trigger {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.card-trigger[hidden] {
+  display: none;
+}
+
+.card-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Conteudo expandido do card (video + info), no fluxo da pagina */
+.card-content {
+  display: flex;
+  gap: 32px;
+  padding: 32px;
+}
+
+.card-content[hidden] {
+  display: none;
+}
+
+.card-content__media {
+  flex: 1 1 65%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+
+.card-content__media iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+.card-content__info {
+  flex: 1 1 35%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-content__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.card-content__title {
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.card-content__description {
+  font-size: 16px;
+  color: var(--color-ink-muted);
+}
+
+.card-content__close {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-ink-muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
 }
 
 /* Artigo */
