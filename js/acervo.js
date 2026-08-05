@@ -105,3 +105,23 @@ document.querySelectorAll(".gallery-grid[id]").forEach((track) => {
   track.addEventListener("scroll", () => updateCarouselNav(track));
   window.addEventListener("resize", () => updateCarouselNav(track));
 });
+
+// Avanca sozinho a cada 5s, em loop (do ultimo card volta pro primeiro).
+// Pausa enquanto algum card estiver expandido, pra nao arrastar o carrossel
+// pra longe de um video que o visitante esteja assistindo.
+const AUTO_ADVANCE_MS = 5000;
+
+document.querySelectorAll(".gallery-grid[id]").forEach((track) => {
+  window.setInterval(() => {
+    if (document.querySelector(".card--expanded")) return;
+
+    const cardWidth = track.querySelector(".card").getBoundingClientRect().width;
+    const maxScroll = track.scrollWidth - track.clientWidth;
+
+    if (track.scrollLeft >= maxScroll - 1) {
+      track.scrollTo({ left: 0, behavior: "smooth" });
+    } else {
+      track.scrollBy({ left: cardWidth + carouselGap, behavior: "smooth" });
+    }
+  }, AUTO_ADVANCE_MS);
+});

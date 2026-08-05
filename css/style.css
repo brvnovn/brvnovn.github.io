@@ -115,8 +115,11 @@ body {
 }
 
 /* Galeria (home) — carrossel: uma unica linha, sem quebra, com scroll
-   horizontal. O container fica preso a largura de .main (584px); os cards
-   podem exceder essa largura, ai e so rolar (pelas setas ou por gesto). */
+   horizontal. O proprio "trilho" (viewport visivel) nao fica mais preso aos
+   584px de .main — a borda esquerda continua onde .main comeca, mas a
+   direita estica até quase a borda da janela (mesma logica de breakout
+   usada antes para o card expandido: metade de main-width + metade da
+   janela, com uma folga de seguranca). */
 .gallery-grid {
   display: flex;
   flex-wrap: nowrap;
@@ -126,6 +129,7 @@ body {
   scroll-behavior: smooth;
   scroll-snap-type: x proximity;
   scrollbar-width: none;
+  width: min(1200px, calc((var(--main-width) / 2) + 50vw - 24px));
 }
 
 .gallery-grid::-webkit-scrollbar {
@@ -156,19 +160,26 @@ body {
   flex: 0 0 min(840px, 90vw);
 }
 
-/* Projeto 1 (LogIA): a arte e mais larga que alta (1280x720). Em vez de
-   recortar as laterais (object-fit: cover), mostramos a largura inteira e
-   preenchemos as sobras de cima/baixo com a mesma cor de fundo da arte. */
+/* Projetos 1 (LogIA) e 3 (Flor do Caribe): arte mais larga que alta
+   (1280x720). Em vez de recortar as laterais (object-fit: cover), mostramos
+   a largura inteira e preenchemos as sobras de cima/baixo com a mesma cor de
+   fundo da arte. */
 .card[data-project="1"] {
   background: #edebed;
 }
 
-.card[data-project="1"] .card-cover {
+.card[data-project="3"] {
+  background: #d3d3d3;
+}
+
+.card[data-project="1"] .card-cover,
+.card[data-project="3"] .card-cover {
   object-fit: contain;
 }
 
-/* ...mas expandido (video + info) volta a ser branco, como os outros cards */
-.card[data-project="1"].card--expanded {
+/* ...mas expandidos (video + info) voltam a ser brancos, como os outros cards */
+.card[data-project="1"].card--expanded,
+.card[data-project="3"].card--expanded {
   background: var(--color-bg);
 }
 
