@@ -91,6 +91,9 @@ body {
   border: 1px solid var(--color-border-soft);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
   overflow: hidden;
+  /* a largura/altura reais da transicao sao setadas via JS (px explicitos)
+     durante a animacao; isso so precisa existir para o transition pegar. */
+  transition: flex-basis 0.35s ease, height 0.35s ease;
 }
 
 .card:not(.card--expanded) {
@@ -98,7 +101,14 @@ body {
 }
 
 .card--expanded {
-  flex-basis: 100%;
+  /* triplica a largura da capa (584px -> ate 1752px), mas nunca deixa o card
+     ultrapassar a borda direita da janela: a borda esquerda fica fixa (main
+     e centralizado), entao so ha espaco disponivel igual a margem direita
+     de main, que e (100vw - main-width) / 2.
+     flex-shrink:0 e essencial aqui: sem isso o flexbox encolhe o item de
+     volta para caber dentro de .main (584px), que e mais estreito que o
+     flex-basis calculado, e o "breakout" nunca acontece. */
+  flex: 0 0 min(calc(var(--main-width) * 3), calc((var(--main-width) / 2) + 50vw - 24px));
 }
 
 /* Projeto 1: a arte e mais larga que alta (1280x720). Em vez de recortar as
