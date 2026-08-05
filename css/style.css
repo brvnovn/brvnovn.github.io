@@ -83,10 +83,98 @@ body {
   gap: var(--gallery-gutter);
 }
 
-.thumb {
+.card {
+  display: block;
+  width: 100%;
   aspect-ratio: 1 / 1;
+  padding: 0;
   border: 1px solid var(--color-border-soft);
-  border-radius: var(--radius);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  background: none;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.card-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Modal de projeto (video + info) */
+.project-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.project-modal[hidden] {
+  display: none;
+}
+
+.project-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.project-modal__panel {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 32px;
+  width: calc(100% - 64px);
+  max-width: 960px;
+  padding: 32px;
+  background: var(--color-bg);
+}
+
+.project-modal__media {
+  flex: 1 1 60%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+
+.project-modal__video,
+.project-modal__video iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+.project-modal__info {
+  flex: 1 1 40%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.project-modal__title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.project-modal__description {
+  font-size: 16px;
+  color: var(--color-ink-muted);
+}
+
+.project-modal__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 8px;
+  border: 0;
+  background: none;
+  color: var(--color-ink-muted);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
 }
 
 /* Artigo */

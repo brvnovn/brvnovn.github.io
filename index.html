@@ -41,12 +41,30 @@
     <section>
       <span class="section-label">Acervo</span>
       <div class="gallery-grid">
-        <div class="thumb"></div>
-        <div class="thumb"></div>
-        <div class="thumb"></div>
-        <div class="thumb"></div>
+        <button type="button" class="card" data-project="1">
+          <img class="card-cover" src="img/acervo/projeto-1.gif" alt="Projeto 1">
+        </button>
+        <button type="button" class="card" data-project="2">
+          <img class="card-cover" src="img/acervo/projeto-2.gif" alt="Projeto 2">
+        </button>
       </div>
     </section>
   </main>
+
+  <div class="project-modal" id="project-modal" hidden>
+    <div class="project-modal__backdrop" data-close></div>
+    <div class="project-modal__panel">
+      <button type="button" class="project-modal__close" data-close aria-label="Fechar">✕</button>
+      <div class="project-modal__media">
+        <div class="project-modal__video" data-video-slot></div>
+      </div>
+      <div class="project-modal__info">
+        <h2 class="project-modal__title"></h2>
+        <p class="project-modal__description"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/acervo.js" defer></script>
 </body>
 </html>
