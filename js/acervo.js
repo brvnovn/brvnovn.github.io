@@ -43,7 +43,10 @@ function expand(card) {
     const iframe = card.querySelector(".card-content__media iframe");
     // autoplay do YouTube exige o video mudo ao iniciar (politica dos
     // navegadores); o visitante pode ativar o som pelos controles do player.
-    iframe.src = `${iframe.dataset.src}?autoplay=1&mute=1`;
+    // Cards sem data-src ainda (conteudo por vir) simplesmente nao carregam nada.
+    if (iframe.dataset.src) {
+      iframe.src = `${iframe.dataset.src}?autoplay=1&mute=1`;
+    }
     card.querySelector(".card-trigger").hidden = true;
     card.querySelector(".card-content").hidden = false;
     card.classList.add("card--expanded");

@@ -111,15 +111,20 @@ body {
   flex: 0 0 min(calc(var(--main-width) * 3), calc((var(--main-width) / 2) + 50vw - 24px));
 }
 
-/* Projeto 1: a arte e mais larga que alta (1280x720). Em vez de recortar as
-   laterais (object-fit: cover), mostramos a largura inteira e preenchemos as
-   sobras de cima/baixo com a mesma cor de fundo da arte. */
+/* Projeto 1 (LogIA): a arte e mais larga que alta (1280x720). Em vez de
+   recortar as laterais (object-fit: cover), mostramos a largura inteira e
+   preenchemos as sobras de cima/baixo com a mesma cor de fundo da arte. */
 .card[data-project="1"] {
   background: #edebed;
 }
 
 .card[data-project="1"] .card-cover {
   object-fit: contain;
+}
+
+/* ...mas expandido (video + info) volta a ser branco, como os outros cards */
+.card[data-project="1"].card--expanded {
+  background: var(--color-bg);
 }
 
 .card-trigger {
@@ -174,9 +179,17 @@ body {
   gap: 12px;
 }
 
+.card-content__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .card-content__title {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
+  text-transform: uppercase;
 }
 
 .card-content__description {
@@ -185,14 +198,11 @@ body {
 }
 
 .card-content__close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 8px;
+  padding: 0;
   border: 0;
   background: none;
   color: var(--color-ink-muted);
-  font-size: 20px;
+  font-size: 16px;
   line-height: 1;
   cursor: pointer;
 }
