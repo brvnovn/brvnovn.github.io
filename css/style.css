@@ -51,6 +51,11 @@ body {
   color: var(--color-ink-muted);
 }
 
+/* sublinhado so aqui — o reset mantem todos os outros links sem linha */
+.contact-line a {
+  text-decoration: underline;
+}
+
 /* Link em destaque (home) */
 .featured-link {
   margin-bottom: 40px;
@@ -73,7 +78,7 @@ body {
    mesmo estilo adotado para os titulos de projeto dos cards do Acervo. */
 .section-label {
   display: block;
-  color: var(--color-ink);
+  color: var(--color-ink-muted);
   font-size: var(--text-meta);
   font-weight: 600;
   text-transform: uppercase;
@@ -264,8 +269,8 @@ body {
 .card-content {
   display: flex;
   align-items: flex-start;
-  gap: 32px;
-  padding: 32px;
+  gap: 16px;
+  padding: 16px;
 }
 
 .card-content[hidden] {

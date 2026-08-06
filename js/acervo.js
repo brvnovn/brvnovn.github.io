@@ -166,6 +166,14 @@ cards.forEach((card) => {
   card.querySelector(".card-content__close").addEventListener("click", () => collapse(card));
 });
 
+// Clique fora do card expandido tambem fecha. O clique que abre nao dispara
+// isso: ele nasce dentro do proprio card, entao contains() e verdadeiro
+// quando o evento chega aqui, ja borbulhado.
+document.addEventListener("click", (event) => {
+  const expanded = document.querySelector(".card--expanded");
+  if (expanded && !expanded.contains(event.target)) collapse(expanded);
+});
+
 // Setas do carrossel: cada par de botoes (prev/next) aponta pra um
 // #id de carrossel via data-carousel-target, e desloca a rolagem por
 // "um card + gap" a cada clique.

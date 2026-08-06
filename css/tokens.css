@@ -20,7 +20,7 @@ literal, nao aproximado.
 
   /* coluna principal — medido, identico nas 3 telas */
   --main-width: 584px;       /* 583.5px medido */
-  --main-top: 132px;         /* 130.5px medido, arredondado para multiplo de 4 (regra de 4 da UX) */
+  --main-top: 88px;          /* 132px medidos, reduzidos em 1/3 a pedido; segue multiplo de 4 */
 
   /* aside — alinhado ao mesmo --main-top; borda esquerda fica a --aside-gap
      do lado esquerdo do .main (nao do viewport) */
