@@ -120,6 +120,10 @@ body {
    direita estica até quase a borda da janela (mesma logica de breakout
    usada antes para o card expandido: metade de main-width + metade da
    janela, com uma folga de seguranca). */
+:root {
+  --carousel-track: min(1200px, calc((var(--main-width) / 2) + 50vw - 24px));
+}
+
 .gallery-grid {
   display: flex;
   flex-wrap: nowrap;
@@ -129,11 +133,19 @@ body {
   scroll-behavior: smooth;
   scroll-snap-type: x proximity;
   scrollbar-width: none;
-  width: min(1200px, calc((var(--main-width) / 2) + 50vw - 24px));
+  width: var(--carousel-track);
 }
 
 .gallery-grid::-webkit-scrollbar {
   display: none;
+}
+
+/* Com um card expandido o snap atrapalha: as larguras ficam desiguais e, a
+   cada mudanca de layout, o navegador puxa a rolagem de volta para o card
+   vizinho, desfazendo o alinhamento a esquerda. Religar depois e seguro: o
+   card alinhado ao inicio do trilho ja e exatamente um ponto de snap. */
+.gallery-grid--has-expanded {
+  scroll-snap-type: none;
 }
 
 .card {
@@ -144,8 +156,10 @@ body {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
   overflow: hidden;
   /* a largura/altura reais da transicao sao setadas via JS (px explicitos)
-     durante a animacao; isso so precisa existir para o transition pegar. */
-  transition: flex-basis 0.35s ease, height 0.35s ease;
+     durante a animacao; isso so precisa existir para o transition pegar.
+     Duracao/curva espelhadas em TRANSITION_MS no acervo.js — mudar juntas. */
+  transition: flex-basis 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+              height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .card:not(.card--expanded) {
@@ -153,11 +167,14 @@ body {
 }
 
 .card--expanded {
-  /* triplica a largura da capa (280px -> ate 840px). Como .gallery-grid
-     agora rola horizontalmente dentro de .main, o card nao precisa mais se
-     preocupar em nao ultrapassar a borda da janela — ele so fica maior que
-     a "vitrine" visivel e da pra rolar ate ele. */
-  flex: 0 0 min(840px, 90vw);
+  /* Largura derivada do video: com o split 65/35 do .card-content, 1080px dao
+     ~640px de video (360px de altura em 16:9) e ~344px para a coluna de texto,
+     que fica com altura parecida — card retangular, sem vazio sob o video.
+     Limitado a --carousel-track (a "vitrine" visivel do carrossel) para o texto
+     nunca ficar fora da tela; em janelas estreitas o card encolhe junto e o
+     video mantem o 16:9. Nao usar 100%: porcentagem em flex-basis cai para o
+     tamanho de conteudo (280px da capa) dentro deste container. */
+  flex: 0 0 min(1080px, var(--carousel-track));
 }
 
 /* Projetos 1 (LogIA) e 3 (Flor do Caribe): arte mais larga que alta
@@ -197,6 +214,42 @@ body {
   display: none;
 }
 
+/* Cross-fade entre as duas camadas do card (a capa e o conteudo expandido).
+   --overlay tira do fluxo a camada que esta saindo, para ela nao entrar na
+   medicao do tamanho final do card e poder sumir por cima da que entra.
+   --veiled e o estado invisivel de onde (ou para onde) as duas transicionam. */
+.card-trigger,
+.card-content {
+  transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease;
+}
+
+/* sem `inset: 0` de proposito: a camada que sai tem largura/altura congeladas
+   em px pelo JS, senao ela seria redimensionada junto com o card a cada frame
+   e o iframe do YouTube faria o colapso engasgar */
+.card-layer--overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.card-layer--veiled {
+  opacity: 0;
+  filter: blur(12px);
+  transform: translateY(8px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card-trigger,
+  .card-content,
+  .gallery-grid {
+    transition: none;
+    scroll-behavior: auto;
+  }
+}
+
 .card-cover {
   width: 100%;
   height: 100%;
@@ -204,9 +257,12 @@ body {
   display: block;
 }
 
-/* Conteudo expandido do card (video + info), no fluxo da pagina */
+/* Conteudo expandido do card (video + info), no fluxo da pagina.
+   flex-start (e nao o stretch padrao) e obrigatorio: com stretch a coluna de
+   texto estica o box do video junto e o aspect-ratio 16/9 abaixo e ignorado. */
 .card-content {
   display: flex;
+  align-items: flex-start;
   gap: 32px;
   padding: 32px;
 }
@@ -235,17 +291,34 @@ body {
   gap: 12px;
 }
 
+/* baseline (e nao center) para que o badge do ano e o X continuem alinhados a
+   primeira linha do titulo quando ele quebra em duas linhas */
 .card-content__header {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   gap: 12px;
+}
+
+.card-content__heading {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
 }
 
 .card-content__title {
   font-size: 16px;
   font-weight: 600;
   text-transform: uppercase;
+}
+
+/* Badge do ano, ao lado do titulo do card */
+.card-content__year {
+  padding: 4px 8px;
+  border: 1px solid var(--color-border);
+  color: var(--color-ink-muted);
+  font-size: 12px;
+  line-height: 1;
 }
 
 .card-content__description {

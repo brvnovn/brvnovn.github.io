@@ -1,5 +1,6 @@
 const cards = document.querySelectorAll(".card");
-const TRANSITION_MS = 350;
+// Espelha a duracao do transition de .card no style.css — mudar as duas juntas.
+const TRANSITION_MS = 450;
 
 // Anima a mudanca de tamanho do card (flex-basis + height) do estado atual
 // para o estado natural resultante de `applyDomChanges`, travando o valor em
@@ -7,20 +8,24 @@ const TRANSITION_MS = 350;
 // % e altura auto nao animam sozinhas).
 function animateResize(card, applyDomChanges, cleanupAfter) {
   const startRect = card.getBoundingClientRect();
-  card.style.flexBasis = startRect.width + "px";
-  card.style.height = startRect.height + "px";
-  card.offsetHeight; // commit antes de mudar o conteudo
 
   applyDomChanges();
 
+  // A medicao do tamanho final precisa acontecer com a transicao desligada:
+  // com ela ligada, o valor computado de flex-basis logo apos a mudanca ainda
+  // e o interpolado no instante 0 — ou seja, o tamanho antigo — e o card
+  // acabaria sendo animado de 280px para 280px.
+  card.style.transition = "none";
   card.style.flexBasis = "";
   card.style.height = "";
   const targetRect = card.getBoundingClientRect();
 
-  // restaura o tamanho inicial antes do proximo paint, senao o navegador
-  // pintaria direto no tamanho final e nao haveria nada pra transicionar
+  // volta ao tamanho inicial, ainda sem transicao, para a animacao ter de onde
+  // partir; so depois de o navegador registrar esse estado e que religamos
   card.style.flexBasis = startRect.width + "px";
   card.style.height = startRect.height + "px";
+  card.offsetHeight;
+  card.style.transition = "";
 
   requestAnimationFrame(() => {
     card.style.flexBasis = targetRect.width + "px";
@@ -88,34 +93,106 @@ function ensurePlayer(card, onReady) {
   else pendingPlayerInits.push(init);
 }
 
+// Alinha a borda esquerda do card com a esquerda do trilho do carrossel, que
+// comeca exatamente onde o corpo da pagina (.main) comeca.
+function alignCardToTrackStart(card) {
+  const track = card.closest(".gallery-grid");
+  if (!track) return;
+
+  const delta = card.getBoundingClientRect().left - track.getBoundingClientRect().left;
+  if (Math.abs(delta) < 1) return;
+
+  track.scrollTo({ left: track.scrollLeft + delta, behavior: "smooth" });
+}
+
+// Enquanto algum card estiver expandido o trilho fica sem scroll-snap (ver o
+// porque no style.css).
+function syncTrackSnap(track) {
+  const hasExpanded = !!track.querySelector(".card--expanded");
+  track.classList.toggle("gallery-grid--has-expanded", hasExpanded);
+}
+
+// Depois de expandir o card pode ficar mais alto que a janela; traz o rodape
+// dele de volta para dentro da tela.
+function revealCardBottom(card) {
+  const overflow = card.getBoundingClientRect().bottom - window.innerHeight;
+  if (overflow > 0) window.scrollBy({ top: overflow + 24, behavior: "smooth" });
+}
+
+// Faz o elemento que esta saindo virar overlay (fora do fluxo) e sumir com
+// fade + blur; o que entra faz o caminho inverso, revelado no frame seguinte
+// para o navegador ter dois estados distintos para interpolar.
+function crossFade(leaving, entering) {
+  const rect = leaving.getBoundingClientRect();
+  leaving.style.width = rect.width + "px";
+  leaving.style.height = rect.height + "px";
+  leaving.classList.add("card-layer--overlay", "card-layer--veiled");
+
+  entering.hidden = false;
+  entering.classList.add("card-layer--veiled");
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => entering.classList.remove("card-layer--veiled"));
+  });
+}
+
+function resetLayers(leaving, entering) {
+  leaving.hidden = true;
+  leaving.style.width = "";
+  leaving.style.height = "";
+  leaving.classList.remove("card-layer--overlay", "card-layer--veiled");
+  entering.classList.remove("card-layer--veiled");
+}
+
 function expand(card) {
   cards.forEach((other) => {
     if (other !== card && other.classList.contains("card--expanded")) collapse(other);
   });
 
-  animateResize(card, () => {
-    card.querySelector(".card-trigger").hidden = true;
-    card.querySelector(".card-content").hidden = false;
-    card.classList.add("card--expanded");
+  const trigger = card.querySelector(".card-trigger");
+  const content = card.querySelector(".card-content");
 
-    ensurePlayer(card, (player) => {
-      player.playVideo();
-      forceHighQuality(player);
-    });
-  });
+  animateResize(
+    card,
+    () => {
+      crossFade(trigger, content);
+      card.classList.add("card--expanded");
+      syncTrackSnap(card.closest(".gallery-grid"));
 
-  card.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+      ensurePlayer(card, (player) => {
+        player.playVideo();
+        forceHighQuality(player);
+      });
+    },
+    () => {
+      resetLayers(trigger, content);
+      // de novo no fim, um frame depois do layout final: durante a animacao o
+      // trilho ainda mudava de largura (o card crescendo, um vizinho talvez
+      // encolhendo) e a rolagem pode ter sido limitada pelo scrollWidth antigo
+      requestAnimationFrame(() => {
+        alignCardToTrackStart(card);
+        revealCardBottom(card);
+      });
+    }
+  );
+
+  alignCardToTrackStart(card);
 }
 
 function collapse(card) {
+  const trigger = card.querySelector(".card-trigger");
+  const content = card.querySelector(".card-content");
+
   animateResize(
     card,
     () => {
       card.classList.remove("card--expanded");
-      card.querySelector(".card-trigger").hidden = false;
-      card.querySelector(".card-content").hidden = true;
+      crossFade(content, trigger);
     },
     () => {
+      resetLayers(content, trigger);
+      // so no fim, para o snap nao puxar a rolagem durante o encolhimento
+      syncTrackSnap(card.closest(".gallery-grid"));
       const player = players.get(card);
       if (player && typeof player.pauseVideo === "function") player.pauseVideo();
     }
