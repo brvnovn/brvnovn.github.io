@@ -2,3 +2,8 @@
 __pycache__/
 .DS_Store
 Thumbs.db
+
+# Originais dos videos (1080p60, ~118 MB no total). Só as versões
+# reencodadas em videos/ vão para o repositório — o histórico do git é
+# permanente e não convém carregar os originais nele.
+videos-src/

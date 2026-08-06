@@ -39,58 +39,24 @@ function animateResize(card, applyDomChanges, cleanupAfter) {
   }, TRANSITION_MS);
 }
 
-// --- YouTube IFrame Player API ---------------------------------------
-// Usamos a API (em vez de <iframe src="..."> estatico) so pra poder pedir
-// qualidade 1080p via setPlaybackQuality(). Aviso: o YouTube descontinuou
-// o respeito a esse pedido ha alguns anos — o player escolhe a resolucao
-// sozinho (tamanho do player + banda do visitante) e pode ignorar; isso e
-// so um "melhor esforco", nao uma garantia.
-const players = new Map(); // card -> YT.Player
-let youtubeApiReady = false;
-const pendingPlayerInits = [];
+// --- Video do projeto -------------------------------------------------
+// <video> nativo com o arquivo hospedado no proprio repositorio. Os players
+// tem preload="none": nada e baixado ate o card ser aberto. O autoplay so e
+// permitido mudo, dai o atributo muted no HTML — os controles nativos ficam
+// disponiveis para quem quiser ligar o som.
+function playCardVideo(card) {
+  const video = card.querySelector(".card-content__player");
+  if (!video) return; // card sem video ainda
 
-window.onYouTubeIframeAPIReady = () => {
-  youtubeApiReady = true;
-  pendingPlayerInits.splice(0).forEach((init) => init());
-};
-
-const ytApiScript = document.createElement("script");
-ytApiScript.src = "https://www.youtube.com/iframe_api";
-document.head.appendChild(ytApiScript);
-
-function forceHighQuality(player) {
-  player.setPlaybackQuality("hd1080");
+  // play() rejeita se o navegador bloquear o autoplay; sem catch isso vira
+  // um erro nao tratado no console
+  const started = video.play();
+  if (started) started.catch(() => {});
 }
 
-function ensurePlayer(card, onReady) {
-  if (players.has(card)) {
-    onReady(players.get(card));
-    return;
-  }
-
-  const target = card.querySelector(".card-content__player");
-  const videoId = target?.dataset.videoId;
-  if (!videoId) return; // card sem video ainda
-
-  const init = () => {
-    const player = new YT.Player(target, {
-      videoId,
-      width: "1280",
-      height: "720",
-      playerVars: { autoplay: 1, mute: 1, playsinline: 1 },
-      events: {
-        onReady: (e) => {
-          forceHighQuality(e.target);
-          onReady(e.target);
-        },
-        onPlaybackQualityChange: (e) => forceHighQuality(e.target),
-      },
-    });
-    players.set(card, player);
-  };
-
-  if (youtubeApiReady) init();
-  else pendingPlayerInits.push(init);
+function pauseCardVideo(card) {
+  const video = card.querySelector(".card-content__player");
+  if (video) video.pause();
 }
 
 // Alinha a borda esquerda do card com a esquerda do trilho do carrossel, que
@@ -159,10 +125,7 @@ function expand(card) {
       card.classList.add("card--expanded");
       syncTrackSnap(card.closest(".gallery-grid"));
 
-      ensurePlayer(card, (player) => {
-        player.playVideo();
-        forceHighQuality(player);
-      });
+      playCardVideo(card);
     },
     () => {
       resetLayers(trigger, content);
@@ -193,8 +156,7 @@ function collapse(card) {
       resetLayers(content, trigger);
       // so no fim, para o snap nao puxar a rolagem durante o encolhimento
       syncTrackSnap(card.closest(".gallery-grid"));
-      const player = players.get(card);
-      if (player && typeof player.pauseVideo === "function") player.pauseVideo();
+      pauseCardVideo(card);
     }
   );
 }
