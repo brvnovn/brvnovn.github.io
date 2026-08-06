@@ -1,0 +1,47 @@
+name: Deploy to GitHub Pages
+
+# Substitui o workflow "pages-build-deployment" que o GitHub gerava sozinho
+# (modo legacy). Aquele não dava para editar nem reexecutar, e vinha travando
+# em "deployment_queued" até estourar o timeout de 10 minutos.
+#
+# O site é HTML/CSS/JS estático, sem nada para compilar — o passo do Jekyll
+# que existia no fluxo antigo não fazia nada de útil e saiu.
+
+on:
+  push:
+    branches: [main]
+  # permite disparar manualmente pela aba Actions, sem precisar de um commit
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Não cancela um deploy em andamento: publicação pela metade é pior que fila.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Configurar Pages
+        uses: actions/configure-pages@v6
+
+      - name: Empacotar o site
+        # o próprio action já exclui .git e .github do pacote
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: .
+
+      - name: Publicar
+        id: deployment
+        uses: actions/deploy-pages@v5
