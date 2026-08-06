@@ -32,4 +32,16 @@ literal, nao aproximado.
   --radius: 8px;
 
   --font-body: "InterVariable", system-ui, sans-serif;
+
+  /* Escala tipografica, ancorada no corpo de 14px.
+     Cinco degraus, cada um com uma funcao — nenhum tamanho solto fora daqui.
+     Os degraus acima do corpo foram mantidos onde estavam: com o corpo caindo
+     de 16 para 14, o contraste dos titulos sobe sozinho (20/14 = 1,43 e
+     24/14 = 1,71), que e uma hierarquia mais saudavel que a anterior.
+     Obs.: 14 e o unico valor fora da escala de 4 — foi a ancora pedida. */
+  --text-meta: 12px;    /* rotulos de secao, datas, bullets, badge, legenda */
+  --text-body: 14px;    /* corpo, links, descricoes, labels do curriculo */
+  --text-strong: 16px;  /* titulo do card do Acervo, setas do carrossel */
+  --text-title: 20px;   /* h1 do nome (home e curriculo) */
+  --text-display: 24px; /* h1 do artigo */
 }
