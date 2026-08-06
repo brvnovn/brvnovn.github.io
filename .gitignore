@@ -7,3 +7,7 @@ Thumbs.db
 # reencodadas em videos/ vão para o repositório — o histórico do git é
 # permanente e não convém carregar os originais nele.
 videos-src/
+
+# Mesma regra para os GIFs de origem das capas (~39 MB). As capas servidas
+# são os MP4 em img/acervo/, gerados a partir destes.
+refs/output*.gif
