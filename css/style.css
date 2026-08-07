@@ -452,3 +452,58 @@ body {
   border-radius: 50%;
   background: var(--color-ink-muted);
 }
+
+/* =====================================================================
+   Mobile
+   O layout de origem e de largura fixa: .main trava em 584px e o
+   .aside-menu fica ancorado fora dele, a --aside-gap de distancia. Abaixo
+   de 640px nao ha espaco para nenhum dos dois, entao a coluna passa a ser
+   fluida e o que era lateral entra no fluxo do documento.
+   Bloco isolado de proposito: acima de 640px o desktop segue identico.
+   ===================================================================== */
+@media (max-width: 640px) {
+  :root {
+    /* respiro do topo menor: em tela pequena os 88px do desktop empurram
+       o nome para fora da primeira dobra */
+    --main-top: 32px;
+
+    /* o breakout do carrossel nao faz sentido sem margem lateral sobrando —
+       ele so empurraria o trilho para fora da tela. Aqui a vitrine e a
+       propria largura util da coluna: a janela menos o padding de .main.
+       Isso tambem redimensiona o card expandido, que ja deriva daqui. */
+    --carousel-track: calc(100vw - 48px);
+  }
+
+  .main {
+    width: 100%;
+    padding-inline: 24px;
+    padding-bottom: 64px;
+  }
+
+  /* sem coluna lateral disponivel, o menu vira uma linha acima do conteudo */
+  .aside-menu {
+    position: static;
+    padding: 24px 24px 0;
+  }
+
+  .profile-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* video em cima, texto embaixo: lado a lado, a 65/35, sobrariam ~110px
+     para a coluna de texto */
+  .card-content {
+    flex-direction: column;
+  }
+
+  .card-content__media,
+  .card-content__info {
+    flex: none;
+    width: 100%;
+  }
+
+  .courses-grid {
+    grid-template-columns: 1fr;
+  }
+}
