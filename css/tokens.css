@@ -31,6 +31,13 @@ literal, nao aproximado.
   --gallery-gutter: 24px;
   --radius: 8px;
 
+  /* Distancia da borda do card ate o conteudo dele (padding de .card-content). */
+  --card-padding: 12px;
+
+  /* Raio dos elementos dentro do card (video e player). Valor escolhido, nao
+     derivado de --radius: a conta do raio concentrico foi abandonada. */
+  --radius-inner: 4px;
+
   --font-body: "InterVariable", system-ui, sans-serif;
 
   /* Escala tipografica, ancorada no corpo de 14px.

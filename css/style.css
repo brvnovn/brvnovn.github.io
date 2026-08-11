@@ -5,11 +5,15 @@ body {
 }
 
 /* Cabecalho de perfil (home + curriculum) */
+/* Escala vertical, em tres degraus, para a hierarquia se ler sozinha:
+   16px do rotulo ate o conteudo dele, 24px entre itens da mesma secao,
+   40px entre secoes. Antes, itens irmaos e secoes usavam os mesmos 40px e o
+   rotulo nao parecia dono do que vinha abaixo. */
 .profile-header {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 32px;
+  margin-bottom: 40px;
 }
 
 .profile-header h1 {
@@ -32,11 +36,12 @@ body {
 }
 
 /* Bio / paragrafos corridos */
+/* o espaco depois da bio agora vem da secao, nao dela */
 .bio {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  margin-bottom: 40px;
+  margin-bottom: 0;
 }
 
 .bio p {
@@ -57,8 +62,8 @@ body {
 }
 
 /* Link em destaque (home) */
-.featured-link {
-  margin-bottom: 40px;
+.featured-link + .featured-link {
+  margin-top: 24px;
 }
 
 .featured-link a {
@@ -79,9 +84,8 @@ body {
 .section-label {
   display: block;
   color: var(--color-ink-muted);
-  font-size: var(--text-meta);
+  font-size: var(--text-body);
   font-weight: 600;
-  text-transform: uppercase;
   margin-bottom: 16px;
 }
 
@@ -159,13 +163,14 @@ body {
   flex: 0 0 280px;
   scroll-snap-align: start;
   border: 1px solid var(--color-border-soft);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius);
   overflow: hidden;
   /* a largura/altura reais da transicao sao setadas via JS (px explicitos)
      durante a animacao; isso so precisa existir para o transition pegar.
      Duracao/curva espelhadas em TRANSITION_MS no acervo.js — mudar juntas. */
   transition: flex-basis 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-              height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+              height 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.12s ease;
 }
 
 .card:not(.card--expanded) {
@@ -173,14 +178,15 @@ body {
 }
 
 .card--expanded {
-  /* Largura derivada do video: com o split 65/35 do .card-content, 1080px dao
-     ~640px de video (360px de altura em 16:9) e ~344px para a coluna de texto,
-     que fica com altura parecida — card retangular, sem vazio sob o video.
-     Limitado a --carousel-track (a "vitrine" visivel do carrossel) para o texto
-     nunca ficar fora da tela; em janelas estreitas o card encolhe junto e o
-     video mantem o 16:9. Nao usar 100%: porcentagem em flex-basis cai para o
-     tamanho de conteudo (280px da capa) dentro deste container. */
-  flex: 0 0 min(1080px, var(--carousel-track));
+  /* Com o texto embaixo do video, a largura do card e a largura do video.
+     Ancorada em --main-width para o card alinhar com a coluna da pagina: os
+     584px descontados do respiro deixam o video em 558px, praticamente o
+     mesmo tamanho que ele tinha no layout lado a lado (562,9px).
+     Limitado a --carousel-track (a "vitrine" visivel do carrossel) para o
+     card nunca passar da tela em janelas estreitas. Nao usar 100%:
+     porcentagem em flex-basis cai para o tamanho de conteudo (280px da
+     capa) dentro deste container. */
+  flex: 0 0 min(var(--main-width), var(--carousel-track));
 }
 
 /* Projetos 1 (LogIA) e 3 (Flor do Caribe): arte mais larga que alta
@@ -246,13 +252,58 @@ body {
   transform: translateY(8px);
 }
 
+/* Retorno ao clique: o elemento encolhe 3% enquanto pressionado.
+   Nos links e botoes isso vem de :active — assim o feedback aparece sem
+   interceptar a navegacao (ctrl+clique, botao do meio e "abrir em nova aba"
+   continuam funcionando). No card, que abre por JS e nao navega, a classe
+   .card--pressed garante que o encolhimento seja visto ANTES da expansao;
+   ver PRESS_MS no acervo.js. */
+.featured-link,
+.profile-header .cv-link,
+.aside-menu a,
+.carousel-nav__btn {
+  transition: transform 0.12s ease;
+}
+
+/* transform nao se aplica a caixa inline */
+.aside-menu a {
+  display: inline-block;
+}
+
+.card--pressed,
+.profile-header .cv-link:active,
+.aside-menu a:active,
+.carousel-nav__btn:active {
+  transform: scale(0.97);
+}
+
+/* O bloco de artigo ocupa a largura inteira da coluna (584px), quase o dobro
+   do card. A 3% cada borda dele andaria 8,8px contra os 4,2px do card — mesmo
+   tempo, muito mais caminho, e o movimento le como arrastado. 1,5% devolve
+   um deslocamento de ~4,4px, parelho com o resto. */
+.featured-link:active {
+  transform: scale(0.985);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .card,
   .card-trigger,
   .card-content,
-  .gallery-grid {
+  .gallery-grid,
+  .featured-link,
+  .profile-header .cv-link,
+  .aside-menu a,
+  .carousel-nav__btn {
     transition: none;
     scroll-behavior: auto;
+  }
+
+  .card--pressed,
+  .featured-link:active,
+  .profile-header .cv-link:active,
+  .aside-menu a:active,
+  .carousel-nav__btn:active {
+    transform: none;
   }
 }
 
@@ -263,42 +314,57 @@ body {
   display: block;
 }
 
-/* Conteudo expandido do card (video + info), no fluxo da pagina.
-   flex-start (e nao o stretch padrao) e obrigatorio: com stretch a coluna de
-   texto estica o box do video junto e o aspect-ratio 16/9 abaixo e ignorado. */
+/* Conteudo expandido do card, no fluxo da pagina: video em cima, texto
+   embaixo, em qualquer largura de tela.
+   flex-start (e nao o stretch padrao) e obrigatorio na direcao cruzada; os
+   dois filhos pedem width: 100% justamente por causa dele. */
 .card-content {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
+  /* o gap separa video e texto entre si; nao entra na conta do raio
+     concentrico, por isso nao acompanha o --card-padding */
   gap: 16px;
-  padding: 16px;
+  padding: var(--card-padding);
 }
 
 .card-content[hidden] {
   display: none;
 }
 
+/* O raio precisa estar aqui tambem, e nao so no player: esta caixa e que
+   pinta o fundo atras do video, e sem o overflow ela apareceria por baixo
+   dos cantos do video.
+   O fundo acompanha o do card em vez de ser preto: nos cantos a suavizacao
+   mistura o fundo com a borda do video, e um preto ali virava um fio escuro
+   visivel. */
 .card-content__media {
-  flex: 1 1 65%;
+  flex: none;
+  width: 100%;
   aspect-ratio: 16 / 9;
-  background: #000;
+  background: var(--color-bg);
+  border-radius: var(--radius-inner);
+  overflow: hidden;
 }
 
 .card-content__player {
   width: 100%;
   height: 100%;
   border: 0;
+  border-radius: var(--radius-inner);
   display: block;
 }
 
 .card-content__info {
-  flex: 1 1 35%;
+  flex: none;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-/* baseline (e nao center) para que o badge do ano e o X continuem alinhados a
-   primeira linha do titulo quando ele quebra em duas linhas */
+/* baseline (e nao center) para o X continuar alinhado a primeira linha do
+   titulo quando ele quebra em duas linhas */
 .card-content__header {
   display: flex;
   align-items: baseline;
@@ -306,22 +372,19 @@ body {
   gap: 12px;
 }
 
-.card-content__heading {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
-
 .card-content__title {
   font-size: var(--text-strong);
   font-weight: 600;
-  text-transform: uppercase;
 }
 
-/* Badge do ano, ao lado do titulo do card */
+/* Badge do ano, no fim da coluna de texto. align-self porque .card-content__info
+   e uma coluna flex: sem isso o badge esticaria na largura inteira. O raio
+   acompanha o do card. */
 .card-content__year {
+  align-self: flex-start;
   padding: 4px 8px;
   border: 1px solid var(--color-border);
+  border-radius: var(--radius);
   color: var(--color-ink-muted);
   font-size: var(--text-meta);
   line-height: 1;
@@ -330,6 +393,14 @@ body {
 .card-content__description {
   font-size: var(--text-body);
   color: var(--color-ink-muted);
+}
+
+/* Link externo do projeto, ao fim dos textos */
+.card-content__link {
+  align-self: flex-start;
+  color: var(--color-link);
+  font-size: var(--text-body);
+  font-weight: 500;
 }
 
 .card-content__close {
@@ -424,8 +495,8 @@ body {
   color: var(--color-ink);
 }
 
-.job-entry {
-  margin-bottom: 32px;
+.job-entry + .job-entry {
+  margin-top: 24px;
 }
 
 .job-entry .bullets {
@@ -491,17 +562,8 @@ body {
     gap: 8px;
   }
 
-  /* video em cima, texto embaixo: lado a lado, a 65/35, sobrariam ~110px
-     para a coluna de texto */
-  .card-content {
-    flex-direction: column;
-  }
-
-  .card-content__media,
-  .card-content__info {
-    flex: none;
-    width: 100%;
-  }
+  /* o empilhamento do card nao esta aqui: video em cima e texto embaixo
+     agora vale em qualquer largura */
 
   .courses-grid {
     grid-template-columns: 1fr;

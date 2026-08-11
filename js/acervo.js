@@ -78,11 +78,23 @@ function syncTrackSnap(track) {
   track.classList.toggle("gallery-grid--has-expanded", hasExpanded);
 }
 
-// Depois de expandir o card pode ficar mais alto que a janela; traz o rodape
-// dele de volta para dentro da tela.
-function revealCardBottom(card) {
-  const overflow = card.getBoundingClientRect().bottom - window.innerHeight;
-  if (overflow > 0) window.scrollBy({ top: overflow + 24, behavior: "smooth" });
+// Depois de expandir, rola a pagina o necessario para o card caber na tela.
+// Com o texto embaixo do video o card ficou bem mais alto, entao nao basta
+// empurrar o rodape para dentro: se ele for mais alto que a janela, isso
+// jogaria o topo (e o video) para fora. Nesse caso alinhamos o topo.
+const REVEAL_MARGIN = 24;
+
+function revealCard(card) {
+  const rect = card.getBoundingClientRect();
+  const maisAltoQueAJanela = rect.height + REVEAL_MARGIN * 2 > window.innerHeight;
+
+  if (maisAltoQueAJanela || rect.top < REVEAL_MARGIN) {
+    window.scrollBy({ top: rect.top - REVEAL_MARGIN, behavior: "smooth" });
+    return;
+  }
+
+  const sobra = rect.bottom + REVEAL_MARGIN - window.innerHeight;
+  if (sobra > 0) window.scrollBy({ top: sobra, behavior: "smooth" });
 }
 
 // Faz o elemento que esta saindo virar overlay (fora do fluxo) e sumir com
@@ -134,7 +146,7 @@ function expand(card) {
       // encolhendo) e a rolagem pode ter sido limitada pelo scrollWidth antigo
       requestAnimationFrame(() => {
         alignCardToTrackStart(card);
-        revealCardBottom(card);
+        revealCard(card);
       });
     }
   );
@@ -161,8 +173,21 @@ function collapse(card) {
   );
 }
 
+// Encolhe o card 3% e só então expande, para o clique ter resposta visível
+// antes da abertura. Espelha a duração do transition de transform no
+// style.css — mudar as duas juntas.
+const PRESS_MS = 120;
+
+function pressThenExpand(card) {
+  card.classList.add("card--pressed");
+  window.setTimeout(() => {
+    card.classList.remove("card--pressed");
+    expand(card);
+  }, PRESS_MS);
+}
+
 cards.forEach((card) => {
-  card.querySelector(".card-trigger").addEventListener("click", () => expand(card));
+  card.querySelector(".card-trigger").addEventListener("click", () => pressThenExpand(card));
   card.querySelector(".card-content__close").addEventListener("click", () => collapse(card));
 });
 

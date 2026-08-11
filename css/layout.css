@@ -25,6 +25,16 @@ body {
   padding-bottom: 96px;
 }
 
+/* O espaco entre secoes pertence a secao, nao a margem do ultimo filho dela
+   — assim ele nao muda conforme o conteudo que fecha cada bloco. */
+.main > section {
+  margin-bottom: 40px;
+}
+
+.main > section:last-child {
+  margin-bottom: 0;
+}
+
 .aside-menu {
   position: absolute;
   top: var(--main-top);
