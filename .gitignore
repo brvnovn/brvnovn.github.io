@@ -11,3 +11,8 @@ videos-src/
 # Mesma regra para os GIFs de origem das capas (~39 MB). As capas servidas
 # são os MP4 em img/acervo/, gerados a partir destes.
 refs/output*.gif
+
+# Material de apoio dos artigos em PDF (resumo.pdf tem 9,4 MB). O repositório
+# é público e o histórico é permanente — os PDFs de referência ficam locais;
+# só o texto dos artigos é versionado.
+artigos/*.pdf

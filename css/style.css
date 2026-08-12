@@ -413,7 +413,18 @@ body {
   cursor: pointer;
 }
 
-/* Artigo */
+/* =====================================================================
+   Artigo
+   O texto dos artigos e escrito em .md e transposto para ca, entao este
+   conjunto cobre exatamente o que o Markdown produz: titulo, subtitulo,
+   secao (h2), subsecao (h3), paragrafo, lista com e sem numero, imagem
+   com legenda e citacao. O mapeamento md -> HTML esta em
+   artigos/MODELO_ARTIGO.md; nada fora dessa lista deve aparecer nos
+   artigos, para o texto novo nunca precisar de CSS novo.
+   Nenhum tamanho novo foi criado: h2 usa --text-strong e h3 usa o corpo
+   com peso 600 — os dois degraus que ja existiam para titulo de card e
+   rotulo de secao.
+   ===================================================================== */
 .article-header {
   margin-bottom: 32px;
 }
@@ -431,25 +442,141 @@ body {
   color: var(--color-ink-muted);
 }
 
-.article-hero {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  border: 1px solid var(--color-border-soft);
-  border-radius: var(--radius);
-}
-
-.article-caption {
-  text-align: center;
-  margin-top: 12px;
-  margin-bottom: 32px;
-  font-size: var(--text-meta);
-  color: var(--color-ink-muted);
-}
-
+/* Coluna flex: o espaco entre blocos vem do gap, nao de margens dos
+   filhos — assim nenhum bloco precisa saber o que vem antes dele. Os
+   titulos ganham margin-top, que em flex SOMA ao gap (nao colapsa como
+   margem normal), para abrirem a secao com mais respiro do que a fecham:
+   40px acima e 24px abaixo no h2, 32/24 no h3. */
 .article-body {
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+.article-body h2 {
+  margin-top: 16px;
+  font-size: var(--text-strong);
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.article-body h3 {
+  margin-top: 8px;
+  font-size: var(--text-body);
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+/* um titulo abrindo o corpo nao tem o que empurrar */
+.article-body > :first-child {
+  margin-top: 0;
+}
+
+/* links dentro do texto corrido: sublinhados, como os do bloco de contato
+   da home — no meio do paragrafo a cor sozinha nao basta para distinguir */
+.article-body a {
+  color: var(--color-link);
+  text-decoration: underline;
+}
+
+/* Listas. O recuo de 24px alinha o texto do item, e nao o marcador, com a
+   margem da coluna. `ol` precisa do reset aqui porque o reset.css so zera
+   `ul`. */
+.article-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.article-list li {
+  position: relative;
+  padding-left: 24px;
+}
+
+ul.article-list li::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-ink-muted);
+}
+
+ol.article-list {
+  counter-reset: article-item;
+}
+
+ol.article-list li::before {
+  counter-increment: article-item;
+  content: counter(article-item) ".";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--color-ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Imagem com legenda. O frame existe mesmo sem imagem: enquanto a arte nao
+   chega, ele reserva o espaco no fluxo (e a diagramacao ja pode ser
+   avaliada). Quando a imagem chegar, basta coloca-la dentro — o
+   .article-figure__placeholder sai e nada mais muda. */
+.article-figure {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+}
+
+.article-figure__frame {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.article-figure__frame--wide {
+  aspect-ratio: 16 / 9;
+}
+
+.article-figure__frame--square {
+  aspect-ratio: 1 / 1;
+}
+
+.article-figure__frame img,
+.article-figure__frame video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.article-figure__placeholder {
+  color: var(--color-ink-muted);
+  font-size: var(--text-meta);
+}
+
+.article-caption {
+  text-align: center;
+  font-size: var(--text-meta);
+  color: var(--color-ink-muted);
+}
+
+/* Citacao / destaque. O fio de 1px e o mesmo dos outros contornos da
+   pagina; o recuo de 16px afasta o texto sem o deslocar da leitura. */
+.article-quote {
+  margin: 0;
+  padding-left: 16px;
+  border-left: 1px solid var(--color-border);
+  color: var(--color-ink-muted);
 }
 
 /* Curriculo */
