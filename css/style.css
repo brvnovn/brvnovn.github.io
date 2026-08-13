@@ -30,9 +30,13 @@ body {
   font-weight: 400;
 }
 
+/* mesmo peso dos titulos da secao Artigos: os dois sao o mesmo tipo de
+   chamada para outra pagina, e pesos diferentes faziam um parecer menos
+   clicavel que o outro */
 .profile-header .cv-link {
   color: var(--color-link);
   font-size: var(--text-body);
+  font-weight: 500;
 }
 
 /* Bio / paragrafos corridos */
@@ -105,21 +109,23 @@ body {
   gap: 8px;
 }
 
+/* As setas seguem as da secao Artigos: mesmo peso 500 e mesmo azul de link.
+   Aqui o azul carrega informacao — a seta so e azul quando ha rolagem
+   disponivel naquele sentido (o `disabled` e ligado e desligado conforme a
+   posicao do trilho, em acervo.js). Sem acao, ela volta ao cinza. */
 .carousel-nav__btn {
   padding: 0;
   border: 0;
   background: none;
-  color: var(--color-ink-muted);
+  color: var(--color-link);
   font-size: var(--text-strong);
+  font-weight: 500;
   line-height: 1;
   cursor: pointer;
 }
 
-.carousel-nav__btn:hover:not(:disabled) {
-  color: var(--color-ink);
-}
-
 .carousel-nav__btn:disabled {
+  color: var(--color-ink-muted);
   opacity: 0.3;
   cursor: default;
 }

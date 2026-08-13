@@ -16,3 +16,7 @@ refs/output*.gif
 # é público e o histórico é permanente — os PDFs de referência ficam locais;
 # só o texto dos artigos é versionado.
 artigos/*.pdf
+
+# artigos/estudos/ é a pasta de estudo do Bruno: material de referência e
+# anotações que nunca acompanham uma versão do site. Fica sempre local.
+artigos/estudos/
