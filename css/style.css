@@ -4,25 +4,35 @@ body {
   line-height: 1.6;
 }
 
-/* Cabecalho de perfil (home + curriculum) */
-/* Escala vertical, em tres degraus, para a hierarquia se ler sozinha:
-   16px do rotulo ate o conteudo dele, 24px entre itens da mesma secao,
-   40px entre secoes. Antes, itens irmaos e secoes usavam os mesmos 40px e o
-   rotulo nao parecia dono do que vinha abaixo. */
-.profile-header {
+/* Perfil (nome + cargo) e lista de links (Inicio/Curriculo/contato) dentro
+   do menu lateral, em todas as paginas. */
+.aside-menu {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 40px;
+  flex-direction: column;
+  gap: 32px;
 }
 
-.profile-header h1 {
+.aside-profile h1 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: var(--text-title);
   line-height: 1.3;
   font-weight: 600;
 }
 
-.profile-header .role {
+/* Marca depois do nome — mesmo simbolo do favicon, mas inline (nao <img src
+   favicon.svg>): o favicon.svg tem uma regra dark-mode que o deixa branco
+   quando o navegador esta no tema escuro, o que apagaria o icone aqui dentro
+   da pagina (fundo sempre claro). fill: currentColor acompanha a cor do
+   texto ao lado. Base de 0.75em (dentro da altura do texto) +15% a pedido =
+   0.8625em. */
+.aside-brand-mark {
+  height: 0.8625em;
+  width: auto;
+}
+
+.aside-profile .role {
   display: block;
   margin-top: 4px;
   font-size: var(--text-body);
@@ -33,10 +43,16 @@ body {
 /* mesmo peso dos titulos da secao Artigos: os dois sao o mesmo tipo de
    chamada para outra pagina, e pesos diferentes faziam um parecer menos
    clicavel que o outro */
-.profile-header .cv-link {
+.aside-menu .cv-link {
   color: var(--color-link);
   font-size: var(--text-body);
   font-weight: 500;
+}
+
+/* .aside-menu a:hover escurece para --color-ink (layout.css) — o cv-link
+   fica azul mesmo, ja que ele nao e um item de navegacao do menu. */
+.aside-menu .cv-link:hover {
+  color: var(--color-link);
 }
 
 /* Bio / paragrafos corridos */
@@ -50,19 +66,6 @@ body {
 
 .bio p {
   color: var(--color-ink);
-}
-
-.contact-line {
-  color: var(--color-ink);
-}
-
-.contact-line .muted-link {
-  color: var(--color-ink-muted);
-}
-
-/* sublinhado so aqui — o reset mantem todos os outros links sem linha */
-.contact-line a {
-  text-decoration: underline;
 }
 
 /* Link em destaque (home) */
@@ -265,7 +268,6 @@ body {
    .card--pressed garante que o encolhimento seja visto ANTES da expansao;
    ver PRESS_MS no acervo.js. */
 .featured-link,
-.profile-header .cv-link,
 .aside-menu a,
 .carousel-nav__btn {
   transition: transform 0.12s ease;
@@ -277,7 +279,6 @@ body {
 }
 
 .card--pressed,
-.profile-header .cv-link:active,
 .aside-menu a:active,
 .carousel-nav__btn:active {
   transform: scale(0.97);
@@ -297,7 +298,6 @@ body {
   .card-content,
   .gallery-grid,
   .featured-link,
-  .profile-header .cv-link,
   .aside-menu a,
   .carousel-nav__btn {
     transition: none;
@@ -306,7 +306,6 @@ body {
 
   .card--pressed,
   .featured-link:active,
-  .profile-header .cv-link:active,
   .aside-menu a:active,
   .carousel-nav__btn:active {
     transform: none;
@@ -378,16 +377,21 @@ body {
   gap: 12px;
 }
 
+/* Titulo + badge do ano agrupados, para o X permanecer sozinho no canto. */
+.card-content__heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .card-content__title {
   font-size: var(--text-strong);
   font-weight: 600;
 }
 
-/* Badge do ano, no fim da coluna de texto. align-self porque .card-content__info
-   e uma coluna flex: sem isso o badge esticaria na largura inteira. O raio
-   acompanha o do card. */
+/* Badge do ano, ao lado do titulo. O raio acompanha o do card. */
 .card-content__year {
-  align-self: flex-start;
   padding: 4px 8px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
@@ -684,15 +688,19 @@ ol.article-list li::before {
     padding-bottom: 64px;
   }
 
-  /* sem coluna lateral disponivel, o menu vira uma linha acima do conteudo */
+  /* sem coluna lateral disponivel, o menu vira um bloco acima do conteudo:
+     nome+cargo em cima, itens do menu (ul) em linha logo abaixo — na largura
+     cheia da tela ha espaco de sobra pra isso, diferente da coluna estreita
+     do desktop. */
   .aside-menu {
     position: static;
     padding: 24px 24px 0;
   }
 
-  .profile-header {
+  .aside-menu ul {
+    flex-direction: row;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 8px 24px;
   }
 
   /* o empilhamento do card nao esta aqui: video em cima e texto embaixo

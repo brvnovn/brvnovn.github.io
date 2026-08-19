@@ -4,7 +4,9 @@ Regra de layout (refs/instrucoes_portifolio.md):
 - .aside-menu fica SEMPRE a mesma distancia horizontal de .main (nao do
   viewport) — os dois se movem juntos ao redimensionar, mas quem centraliza
   e o .main sozinho, nao o par main+aside.
-- .aside-menu so existe nas subpaginas (article/curriculum).
+- .aside-menu por padrao so existe nas subpaginas (article/curriculum); a
+  branch menu-lateral-home testa levar nome+cargo, contato e o botao
+  Curriculo para la tambem na home, para avaliacao.
 
 Por isso .aside-menu e posicionado com `position: absolute`, calculado a
 partir do mesmo centro (50%) que centraliza o .main, em vez de flexbox (que
