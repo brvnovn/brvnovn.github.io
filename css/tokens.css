@@ -65,7 +65,7 @@ literal, nao aproximado.
      Obs.: 14 e o unico valor fora da escala de 4 — foi a ancora pedida. */
   --text-meta: 12px;    /* rotulos de secao, datas, bullets, badge, legenda */
   --text-body: 14px;    /* corpo, links, descricoes, labels do curriculo */
-  --text-strong: 16px;  /* titulo do card do Acervo, setas do carrossel */
+  --text-strong: 16px;  /* setas do carrossel */
   --text-title: 20px;   /* h1 do nome (home e curriculo) */
   --text-display: 24px; /* h1 do artigo */
 }

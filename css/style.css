@@ -422,8 +422,10 @@ body {
   gap: 8px;
 }
 
+/* mesmo corpo dos titulos da secao Artigos (--text-body): os dois sao o
+   titulo de um item listado na home, e o card estava um degrau acima */
 .card-content__title {
-  font-size: var(--text-strong);
+  font-size: var(--text-body);
   font-weight: 600;
 }
 
