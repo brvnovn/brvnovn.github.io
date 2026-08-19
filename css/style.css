@@ -9,7 +9,19 @@ body {
 .aside-menu {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  /* metade do respiro de 32px que separava o perfil da lista; a outra metade
+     e o padding-top do ul, de forma que a linha entre os dois fique no meio */
+  gap: 16px;
+}
+
+/* branch teste-fundo-linha-sombra: linha da referencia separando o bloco de
+   perfil (nome + cargo) da lista de links. Fica no ul, e nao no perfil, para
+   nao passar do link mais largo: o align-self encolhe a lista ate o conteudo
+   (sem ele o ul esticaria ate a largura do aside, que e a do nome). */
+.aside-menu ul {
+  align-self: flex-start;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-divider);
 }
 
 .aside-profile h1 {
@@ -140,7 +152,21 @@ body {
    usada antes para o card expandido: metade de main-width + metade da
    janela, com uma folga de seguranca). */
 :root {
-  --carousel-track: min(1200px, calc((var(--main-width) / 2) + 50vw - 24px));
+  /* Folga interna do trilho: o overflow do carrossel recorta tudo que passa
+     das bordas, e a sombra dos cards passa. O padding abre espaco para ela e
+     a margem negativa de mesmo valor devolve o trilho a posicao original, de
+     forma que o alinhamento do primeiro card com .main nao muda. Nao ha folga
+     em cima porque --shadow-card nao sobe acima do card. */
+  --carousel-bleed-x: 24px;
+  --carousel-bleed-bottom: 32px;
+
+  /* A vitrine visivel encolhe --carousel-bleed-x para a folga da direita caber
+     dentro da janela: sem isso o trilho terminaria depois da borda e a pagina
+     ganharia rolagem horizontal. */
+  --carousel-track: min(
+    1200px,
+    calc((var(--main-width) / 2) + 50vw - 24px - var(--carousel-bleed-x))
+  );
 }
 
 .gallery-grid {
@@ -152,7 +178,13 @@ body {
   scroll-behavior: smooth;
   scroll-snap-type: x proximity;
   scrollbar-width: none;
-  width: var(--carousel-track);
+  width: calc(var(--carousel-track) + var(--carousel-bleed-x) * 2);
+  padding: 0 var(--carousel-bleed-x) var(--carousel-bleed-bottom);
+  margin: 0 calc(-1 * var(--carousel-bleed-x))
+          calc(-1 * var(--carousel-bleed-bottom));
+  /* sem isso o snap gruda o card na borda do trilho, que agora fica
+     --carousel-bleed-x a esquerda de onde o card deve parar */
+  scroll-padding-left: var(--carousel-bleed-x);
 }
 
 .gallery-grid::-webkit-scrollbar {
@@ -171,8 +203,13 @@ body {
   position: relative;
   flex: 0 0 280px;
   scroll-snap-align: start;
-  border: 1px solid var(--color-border-soft);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border-soft);
   border-radius: var(--radius);
+  /* branch teste-fundo-linha-sombra: sombra sutil da referencia. Fica fora do
+     overflow: hidden (que so recorta o conteudo), entao a capa continua
+     cortada no raio e o halo aparece por fora da borda. */
+  box-shadow: var(--shadow-card);
   overflow: hidden;
   /* a largura/altura reais da transicao sao setadas via JS (px explicitos)
      durante a animacao; isso so precisa existir para o transition pegar.
@@ -218,7 +255,7 @@ body {
 /* ...mas expandidos (video + info) voltam a ser brancos, como os outros cards */
 .card[data-project="1"].card--expanded,
 .card[data-project="3"].card--expanded {
-  background: var(--color-bg);
+  background: var(--color-surface);
 }
 
 .card-trigger {
@@ -347,7 +384,7 @@ body {
   flex: none;
   width: 100%;
   aspect-ratio: 16 / 9;
-  background: var(--color-bg);
+  background: var(--color-surface);
   border-radius: var(--radius-inner);
   overflow: hidden;
 }

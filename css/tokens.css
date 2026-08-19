@@ -11,12 +11,29 @@ literal, nao aproximado.
 :root {
   /* cores (RGB exatos amostrados; sao provavelmente preto em varias opacidades
      sobre o fundo, mas fixamos como hex resultante) */
-  --color-bg: #fdfdfc;
+  /* branch teste-fundo-linha-sombra: fundo cinza amostrado da referencia
+     (#f3f3f3), no lugar do quase-branco #fdfdfc. Com o fundo cinza o card
+     precisa de uma cor propria de superficie para se destacar dele — dai
+     --color-surface. */
+  --color-bg: #f3f3f3;
+  --color-surface: #ffffff;   /* superficie elevada: card do Acervo */
   --color-ink: #363636;       /* texto principal */
   --color-ink-muted: #999999;  /* texto secundario / meta */
   --color-border: #d9d9d9;    /* contorno de placeholders (galeria, imagem do artigo) */
   --color-border-soft: #e4e4e3; /* divisores mais sutis */
+  --color-divider: #dddddd;   /* linha divisoria da referencia, amostrada */
   --color-link: #0099ff;
+
+  /* Sombra do card, derivada por amostragem do exemplo (scan de pixel ao
+     redor do mockup): a queda de luminancia vai de ~22 niveis colada na
+     base a 0 ~58px abaixo dela, e de ~15 niveis nas laterais — ou seja,
+     sombra deslocada para baixo, difusa e de opacidade baixa. Dois passos:
+     um curto que assenta a borda e um longo que faz o halo.
+     O spread negativo existe para a sombra nao subir acima do card: uma
+     sombra de blur B sobe B/2 alem da borda, entao o topo dela fica em
+     (deslocamento - B/2 + spread) — os valores abaixo zeram essa conta. */
+  --shadow-card: 0 2px 4px -1px rgba(0, 0, 0, 0.04),
+                 0 12px 40px -8px rgba(0, 0, 0, 0.08);
 
   /* coluna principal — medido, identico nas 3 telas */
   --main-width: 584px;       /* 583.5px medido */

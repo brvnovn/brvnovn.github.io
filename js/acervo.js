@@ -65,7 +65,13 @@ function alignCardToTrackStart(card) {
   const track = card.closest(".gallery-grid");
   if (!track) return;
 
-  const delta = card.getBoundingClientRect().left - track.getBoundingClientRect().left;
+  // o trilho tem um padding lateral so para a sombra dos cards nao ser
+  // recortada (ver --carousel-bleed-x no style.css); o inicio util e a borda
+  // do conteudo, nao a do elemento
+  const trackLeft =
+    track.getBoundingClientRect().left + parseFloat(getComputedStyle(track).paddingLeft);
+
+  const delta = card.getBoundingClientRect().left - trackLeft;
   if (Math.abs(delta) < 1) return;
 
   track.scrollTo({ left: track.scrollLeft + delta, behavior: "smooth" });
