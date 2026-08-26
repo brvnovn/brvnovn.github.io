@@ -67,6 +67,24 @@ body {
   color: var(--color-link);
 }
 
+/* Texto do link de e-mail (ver js/copiar-email.js): o span anima
+   opacidade+blur no crossfade entre "Email" e "Copiado.", igual ao gesto
+   usado nos cards do acervo. is-copied fica depois de :hover para vencer o
+   empate de especificidade e o azul nao ser ofuscado no hover. */
+.aside-email__label {
+  display: inline-block;
+  transition: opacity 0.18s ease, filter 0.18s ease;
+}
+
+.aside-email__label--veiled {
+  opacity: 0;
+  filter: blur(4px);
+}
+
+.aside-menu a.is-copied {
+  color: var(--color-link);
+}
+
 /* Bio / paragrafos corridos */
 /* o espaco depois da bio agora vem da secao, nao dela */
 .bio {
