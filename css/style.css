@@ -59,12 +59,23 @@ body {
   color: var(--color-link);
   font-size: var(--text-body);
   font-weight: 500;
+  /* ajuste optico, ver comentario acima de a[href="index.html"] abaixo */
+  margin-left: -1px;
 }
 
 /* .aside-menu a:hover escurece para --color-ink (layout.css) — o cv-link
    fica azul mesmo, ja que ele nao e um item de navegacao do menu. */
 .aside-menu .cv-link:hover {
   color: var(--color-link);
+}
+
+/* Ajuste optico: o traco curvo de "↩" e o "C" (Curriculo, acima) tem menos
+   tinta colada na margem esquerda que as hastes retas de L/W/E, entao os
+   dois pareciam levemente deslocados para a direita apesar de comecarem no
+   mesmo x — mesmo efeito de por que um "O" parece desalinhado ao lado de
+   um "H". Correcao manual, nao ha regra que resolva isso sozinha. */
+.aside-menu a[href="index.html"] {
+  margin-left: -2px;
 }
 
 /* Texto do link de e-mail (ver js/copiar-email.js): o span anima
