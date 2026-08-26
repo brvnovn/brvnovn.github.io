@@ -76,6 +76,14 @@ body {
    um "H". Correcao manual, nao ha regra que resolva isso sozinha. */
 .aside-menu a[href="index.html"] {
   margin-left: -2px;
+  /* Inicio com o mesmo peso do link Curriculo (.cv-link): os dois sao a
+     mesma chamada de navegacao entre paginas. */
+  color: var(--color-link);
+  font-weight: 500;
+}
+
+.aside-menu a[href="index.html"]:hover {
+  color: var(--color-link);
 }
 
 /* Texto do link de e-mail (ver js/copiar-email.js): o span anima
@@ -109,9 +117,31 @@ body {
   color: var(--color-ink);
 }
 
-/* Link em destaque (home) */
+/* Link em destaque (home) — miniatura 4:3 a esquerda + texto */
+.featured-link {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
 .featured-link + .featured-link {
   margin-top: 24px;
+}
+
+/* placeholder de midia: mesmo estilo do card do Acervo (borda, raio e
+   superficie), porem SEM a sombra. Largura fixa multipla de 4; o 4:3 define
+   a altura. */
+.featured-link__media {
+  flex: 0 0 64px;
+  aspect-ratio: 4 / 3;
+  border: 2px solid var(--color-border-soft);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.featured-link__body {
+  flex: 1;
+  min-width: 0;
 }
 
 .featured-link a {
@@ -729,20 +759,190 @@ ol.article-list li::before {
   background: var(--color-ink-muted);
 }
 
+/* Colunas de competencias (Areas de Interesse, Ferramentas, Afinidade com
+   Processos) — mesma logica de grade dos Cursos, mas em 3 colunas alinhadas
+   pelo topo, cada uma com seu rotulo e uma lista vertical propria. */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.skill-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* as caixas de texto (titulo e itens) ficam limitadas a 70% da largura da
+   coluna — nomes mais longos quebram em vez de esticar ate a borda */
+.skill-col .section-label,
+.skill-list li {
+  max-width: 70%;
+}
+
+.skill-list li {
+  color: var(--color-ink);
+  font-size: var(--text-body);
+}
+
+/* o "-" do documento vira um respiro entre o grupo principal e o resto.
+   A regua acompanha a largura do titulo da coluna (nao a coluna inteira):
+   6.1em medidos no texto "Ferramentas", ancorados ao mesmo token de fonte do
+   titulo (--text-body) para escalar junto. */
+.skill-list__divider {
+  width: calc(var(--text-body) * 6.1);
+  max-width: 100%;
+  height: 1px;
+  margin: 8px 0;
+  background: var(--color-border);
+}
+
 /* =====================================================================
-   Mobile
-   O layout de origem e de largura fixa: .main trava em 584px e o
-   .aside-menu fica ancorado fora dele, a --aside-gap de distancia. Abaixo
-   de 640px nao ha espaco para nenhum dos dois, entao a coluna passa a ser
-   fluida e o que era lateral entra no fluxo do documento.
-   Bloco isolado de proposito: acima de 640px o desktop segue identico.
+   Revelar-no-hover
+   Conteudo extra recolhido que so aparece ao passar o mouse (ou focar via
+   teclado) sobre o grupo. A transicao de estado espelha a dos cards do index:
+   a ALTURA anima em cubic-bezier(0.22, 1, 0.36, 1) (via grid-template-rows
+   0fr->1fr, que dispensa saber a altura final) e o conteudo faz o mesmo
+   cross-fade das camadas do card — opacity + blur(12px) + translateY(8px).
+   O indicativo (".reveal__toggle") colapsa em sincronia com a abertura, entao
+   ".reveal" nunca encolhe abaixo do cursor e o hover nao pisca.
+   ===================================================================== */
+.reveal__toggle {
+  appearance: none;
+  min-height: 0;
+  overflow: hidden;
+  border: 0;
+  background: none;
+  padding: 4px 0 0;
+  font: inherit;
+  line-height: 1;
+  letter-spacing: 2px;
+  text-align: left;
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  transition: color 0.15s ease, opacity 0.35s ease;
+}
+
+.reveal__toggle:hover,
+.reveal__toggle:focus-visible {
+  color: var(--color-ink);
+}
+
+/* o indicativo vive numa faixa que colapsa (1fr -> 0fr) ao revelar */
+.reveal__toggle-wrap {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* O estado aberto e uma classe (.is-open) posta por js/reveal.js, nao :hover:
+   o mouse abre e o item TRAVA aberto; so um clique sobre a regiao expandida
+   devolve ao estado contraido. */
+.reveal.is-open > .reveal__toggle-wrap {
+  grid-template-rows: 0fr;
+}
+
+.reveal.is-open .reveal__toggle {
+  opacity: 0;
+}
+
+/* faixa do conteudo: cresce de 0fr a 1fr com o mesmo tempo/curva do card */
+.reveal__more {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.is-open > .reveal__more {
+  grid-template-rows: 1fr;
+}
+
+/* o conteudo em si entra com o cross-fade das camadas do card */
+.reveal__inner {
+  min-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  filter: blur(12px);
+  transform: translateY(8px);
+  transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease;
+}
+
+.reveal.is-open .reveal__inner {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+/* aberto, a regiao expandida convida ao clique que a fecha */
+.reveal.is-open > .reveal__more {
+  cursor: pointer;
+}
+
+/* variante em pilha (coluna Ferramentas): itens revelados seguem o mesmo
+   empilhamento e respiro da lista */
+.reveal--stack .reveal__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* variante blocos (Experiencia profissional): o toggle fica na posicao do 2o
+   cargo, com o mesmo respiro que separa os job-entry */
+.job-entry + .reveal--jobs {
+  margin-top: 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal__toggle-wrap,
+  .reveal__more,
+  .reveal__inner,
+  .reveal__toggle {
+    transition: none;
+  }
+}
+
+/* =====================================================================
+   Menu empilhado (~1245px)
+   O menu e a coluna andam juntos com o centro da janela: o espaco a
+   ESQUERDA do menu (borda da janela -> menu) e W/2 - 528px e varia com a
+   janela; o da DIREITA (menu -> coluna) e ~95px fixos. Eles se igualam em
+   W = 1528 - 2*(largura do menu ~141px) ~ 1245px. Abaixo disso o espaco
+   esquerdo fica menor que o direito: o menu sai da lateral e vira um
+   cabecalho acima da coluna, que segue fixa (584px) e centralizada ate o
+   mobile. Bloco isolado: acima de 1245px o desktop segue identico.
+   ===================================================================== */
+@media (max-width: 1245px) {
+  .aside-menu {
+    position: static;
+    /* alinha o menu a borda esquerda da coluna centralizada; quando a coluna
+       vira fluida (<=640px) o max() cai para os 24px de padding do .main */
+    margin-inline: max(24px, calc(50% - var(--main-width) / 2));
+    padding-top: 48px;
+  }
+
+  .aside-menu ul {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    margin-top: 16px;
+  }
+
+  /* o cabecalho ja da o respiro do topo; a coluna encosta logo abaixo dele */
+  .main {
+    padding-top: 24px;
+  }
+}
+
+/* =====================================================================
+   Mobile (<=640px)
+   Abaixo de 640px nem a coluna cabe fixa: ela vira fluida e ocupa a largura
+   util da tela. O menu (ja empilhado desde 1245px) apenas realinha ao
+   padding da coluna.
    ===================================================================== */
 @media (max-width: 640px) {
   :root {
-    /* respiro do topo menor: em tela pequena os 88px do desktop empurram
-       o nome para fora da primeira dobra */
-    --main-top: 32px;
-
     /* o breakout do carrossel nao faz sentido sem margem lateral sobrando —
        ele so empurraria o trilho para fora da tela. Aqui a vitrine e a
        propria largura util da coluna: a janela menos o padding de .main.
@@ -756,25 +956,21 @@ ol.article-list li::before {
     padding-bottom: 64px;
   }
 
-  /* sem coluna lateral disponivel, o menu vira um bloco acima do conteudo:
-     nome+cargo em cima, itens do menu (ul) em linha logo abaixo — na largura
-     cheia da tela ha espaco de sobra pra isso, diferente da coluna estreita
-     do desktop. */
+  /* coluna fluida: o menu realinha aos 24px de padding do .main e encosta
+     um pouco mais no topo */
   .aside-menu {
-    position: static;
-    padding: 24px 24px 0;
-  }
-
-  .aside-menu ul {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 8px 24px;
+    margin-inline: 24px;
+    padding-top: 32px;
   }
 
   /* o empilhamento do card nao esta aqui: video em cima e texto embaixo
      agora vale em qualquer largura */
 
   .courses-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .skills-grid {
     grid-template-columns: 1fr;
   }
 }

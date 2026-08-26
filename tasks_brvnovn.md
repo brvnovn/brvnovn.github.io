@@ -17,3 +17,9 @@ O Claude deve marcar como concluído o item dessa lista após sua implementaçã
 9. [x] engrosse o peso das setas do carrossel para que conversem com as setas usadas nos títulos de artigos. Quando a seta é cl içável (tem ação disponível) ela deve ser azul (o mesmo que usamos em outros lugares.)
 10. [x] alterar a ordem dos artigos na sessão do index. se considerarmos 1, 2 e 3 respectivamente a ordem atual empilhada, a nova ordem deve ser 2,3,1.
 11. [x] Adicione no Card do projeto logia, assim como no da Landing Page, um um hyperlink com seta "Saiba mais" para o link https://repositorio.bc.ufg.br/items/5d11560e-2910-4a99-898c-4fdaaf554609 ; Renomeie o da LP para "Visite agora"
+12. [x] revisar mudanças interrompidas pelo limite da sessão. a transição de estado dos itens que estão contraídos na pagina currículo deve seguir a animação que já acontece com os cards no index.
+13. [x] adicionar um quarto artigo + criar sua respectiva pagina. titulo: "Evoluir é errar" Descr.: "Uma revisão crítica dos meus primeiros projetos."
+14. [x] adicionar um placeholder de mídia 4:3 no lado esquerdo de cada item de artigo. use o estilo dos cards como referencia, mas sem sombra.
+15. [x] analise os pontos de quebra da site atualmente. quero que a parti do momento que o espaçamento esquerdo do menu lateral seja menor que o espaçamento direito do menu, a pagina se altere para que o o componente do menu seja empilhado na vertical (que usamos para o mobile). [breakpoint calculado em ~1245px; menu empilha alinhado à coluna fixa; mobile completo segue em 640px]
+16. [x] corrija para que o botão inicio siga o mesmo peso que o botão currículo e commite as alterações em aberto.
+17. [ ] em vez de após (abaixo) do componente de nome, os botões do menu devem estar ao lado direito do componente de nome, alinhados a direita do corpo da pagina. essa configuração só deve valer para a quebra de pagina que intermediaria 
