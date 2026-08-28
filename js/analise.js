@@ -92,18 +92,37 @@
     });
   }
 
-  // Troca o DOM sob o veu (blur+opacidade) e revela num unico crossfade de
-  // 0.35s — igual ao ritmo do crossFade() dos cards do index (js/acervo.js):
-  // o duplo rAF da tempo do navegador pintar o quadro velado antes de
-  // remover a classe, senao a transicao de entrada nao dispara.
+  // Espelha a duracao de opacity/filter/transform definida em
+  // .analise__historico, .analise__topicos, .analise__fila (css/style.css).
+  const TRANSITION_MS = 180;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Cross-fade em duas fases: primeiro o bloco sai (blur+opacidade+deslocamento
+  // por 0.18s, ver .analise.is-veiled), so entao o conteudo troca por baixo do
+  // veu (ja invisivel, a troca nao pisca) e o bloco novo entra com a mesma
+  // transicao invertida. Sem o setTimeout esperando a saida terminar, a troca
+  // de conteudo acontecia quase no mesmo frame em que o veu comecava — a
+  // animacao mal tinha percorrido o caminho antes de reverter, ficando quase
+  // imperceptivel. O duplo rAF antes de remover a classe da o tempo do
+  // navegador pintar o quadro velado, senao a transicao de entrada nao dispara
+  // (mesmo truque do crossFade() dos cards do index, js/acervo.js).
   function transitionTo(nextCursor) {
     root.classList.add("is-veiled");
-    requestAnimationFrame(() => {
+
+    const swap = () => {
       cursor = nextCursor;
       renderLists();
       updateShot();
-      requestAnimationFrame(() => root.classList.remove("is-veiled"));
-    });
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => root.classList.remove("is-veiled"));
+      });
+    };
+
+    if (reducedMotion) {
+      swap();
+    } else {
+      window.setTimeout(swap, TRANSITION_MS);
+    }
   }
 
   function selectTopic(topic, btn) {

@@ -750,10 +750,10 @@ ol.article-list li::before {
    troca conforme o topico lido ao lado, com um retangulo de destaque sobre
    a regiao do print que o paragrafo critica. O corpo vaza a coluna do
    artigo (584px) desde o primeiro paint — foto em 306px (85% do tamanho
-   original, o teto de reducao pedido) e coluna de texto em 508px, o dobro
-   do espaco que caberia dentro dos 584px. width:max-content escapa do
-   stretch de largura fixa herdado do .article-body (flex column), que e o
-   que faz o corpo vazar para a direita.
+   original, o teto de reducao pedido) e coluna de texto em 406px (508px
+   menos 20%). width:max-content escapa do stretch de largura fixa herdado
+   do .article-body (flex column), que e o que faz o corpo vazar para a
+   direita.
    Todas as transicoes reusam o par blur+opacidade+translateY ja usado no
    crossfade dos cards (.card-layer--veiled) e no reveal (.reveal__inner);
    o clique usa a mesma reducao de 3% do .card--pressed (js/acervo.js).
@@ -766,7 +766,7 @@ ol.article-list li::before {
 .analise {
   display: grid;
   width: max-content;
-  grid-template-columns: 306px 508px;
+  grid-template-columns: 306px 406px;
   grid-template-rows: auto auto;
   column-gap: 24px;
   row-gap: 16px;
@@ -983,16 +983,17 @@ ol.article-list li::before {
 }
 
 /* troca de estado do bloco inteiro (historico + topicos + fila): sai e
-   entra com o mesmo par blur+opacidade+translateY do resto do site. O
-   reflow acontece enquanto o bloco esta velado (classe no proprio
-   .analise), entao a mudanca de altura nao pisca. */
+   entra com blur+opacidade+deslocamento, em 0.18s — mais rapido que o
+   crossfade padrao do site (0.35s), para a resposta ao clique ficar mais
+   direta. O reflow acontece enquanto o bloco esta velado (classe no
+   proprio .analise), entao a mudanca de altura nao pisca. */
 .analise__historico,
 .analise__topicos,
 .analise__fila {
   opacity: 1;
   filter: none;
   transform: none;
-  transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease;
+  transition: opacity 0.18s ease, filter 0.18s ease, transform 0.18s ease;
 }
 
 .analise.is-veiled .analise__historico,
