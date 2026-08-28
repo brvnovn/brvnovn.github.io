@@ -132,6 +132,66 @@ body {
   min-width: 0;
 }
 
+/* Miniatura de preview ao pairar o mouse num artigo (tarefa 30): mesmo
+   tamanho/borda/sombra do card do Acervo, mostrando o topo real da pagina
+   do artigo dentro de um iframe. A secao Artigos precisa de position:relative
+   para a miniatura (position:absolute) se posicionar em relacao a ela, nao
+   a janela inteira. */
+.section-articles {
+  position: relative;
+}
+
+.article-preview {
+  position: absolute;
+  left: 0;
+  width: 280px;
+  height: 280px;
+  overflow: hidden;
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  background: var(--color-bg);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  filter: blur(12px);
+  transform: translateY(8px);
+  transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease;
+}
+
+.article-preview.is-visible {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+/* iframe com viewport fixo (independente da largura real da janela de quem
+   visita) — ver js/article-preview.js para o motivo do tamanho fixo e do
+   CSS injetado que remove o menu lateral e trava a largura do .main. Escala
+   UNIFORME (0,4 = 280/700) nos dois eixos, para o conteudo nunca esticar —
+   a largura do iframe (490px = 700 x 0,7, os 30% de contracao pedidos) e
+   quem recorta o respiro, nao a escala: o iframe captura uma fatia mais
+   estreita da pagina (menos largura de conteudo real), a mesma escala Y
+   preenche a altura inteira (sem margem no topo/base) e sobra 42px de
+   margem de cada lado horizontal (280 - 490*0,4 = 196; (280-196)/2 = 42) —
+   a caixa do card continua 280x280. */
+.article-preview__frame {
+  position: absolute;
+  top: 0;
+  left: 42px;
+  width: 490px;
+  height: 700px;
+  border: 0;
+  transform: scale(0.4);
+  transform-origin: top left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article-preview {
+    transition: none;
+  }
+}
+
 .featured-link a {
   display: block;
   color: var(--color-link);
