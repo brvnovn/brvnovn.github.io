@@ -874,19 +874,26 @@ ol.article-list li::before {
   margin-bottom: 16px;
 }
 
+/* Magnificacao por proximidade do mouse (JS seta --proximity de 0 a 1 por
+   traco, ver js/analise.js) — o traco mais perto do cursor alarga e escurece,
+   os vizinhos seguem o mesmo movimento em degrade, como o dock do macOS.
+   Repouso em 12px (metade do tamanho antigo); no pico da magnificacao
+   (proximity 1) o traco chega aos 24px que era o comprimento de repouso
+   anterior. Sem JS (ou fora do :hover), --proximity fica em 0 e o traco
+   volta ao tamanho/cor padrao. */
 .analise__historico button {
   appearance: none;
   position: relative;
   display: block;
-  width: 24px;
+  width: calc(12px + var(--proximity, 0) * 12px);
   height: 2px;
   margin: 0;
   padding: 0;
   border: 0;
   border-radius: 9999px;
-  background: var(--color-border);
+  background: color-mix(in srgb, var(--color-link) calc(var(--proximity, 0) * 100%), var(--color-border));
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.12s ease;
+  transition: width 0.1s ease, background 0.1s ease, transform 0.12s ease;
 }
 
 /* area de toque 3x maior que a linha visivel (2px -> 6px), centralizada no

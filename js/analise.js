@@ -126,6 +126,29 @@
     if (buttons[next]) buttons[next].focus();
   });
 
+  // Magnificacao dos tracos do historico por proximidade do mouse (igual ao
+  // dock do macOS): cada traco recebe --proximity (0 a 1) conforme a
+  // distancia do seu centro ate o cursor, e o CSS (.analise__historico
+  // button) usa essa variavel para alargar e escurecer. historicoEl e o
+  // mesmo no, so o innerHTML muda a cada renderLists(), entao os listeners
+  // seguem validos sem precisar reanexar.
+  const MAGNIFY_RADIUS = 60;
+
+  historicoEl.addEventListener("mousemove", (event) => {
+    historicoEl.querySelectorAll("button").forEach((btn) => {
+      const rect = btn.getBoundingClientRect();
+      const distance = Math.abs(event.clientY - (rect.top + rect.height / 2));
+      const proximity = Math.max(0, 1 - distance / MAGNIFY_RADIUS);
+      btn.style.setProperty("--proximity", proximity.toFixed(3));
+    });
+  });
+
+  historicoEl.addEventListener("mouseleave", () => {
+    historicoEl.querySelectorAll("button").forEach((btn) => {
+      btn.style.removeProperty("--proximity");
+    });
+  });
+
   renderLists();
   updateShot();
   root.classList.add("is-ready");
