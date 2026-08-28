@@ -58,6 +58,32 @@ Quando a imagem chegar, ela substitui o `<span>` e o resto fica igual:
 Proporção do frame: `4:3` é o padrão; `article-figure__frame--wide` dá 16:9
 (usado nas aberturas) e `article-figure__frame--square` dá 1:1.
 
+## Rodapé de artigos relacionados
+
+Toda página de artigo termina com um rodapé de 2 colunas destacando outros
+dois artigos do site — mesma aparência dos links da seção Artigos do index
+(seta + título + descrição), sem miniatura:
+
+```html
+<div class="article-footer">
+  <div class="article-footer__item">
+    <a href="artigo-x.html">↪ Título do artigo X</a>
+    <p class="subtitle">Descrição do artigo X.</p>
+  </div>
+  <div class="article-footer__item">
+    <a href="artigo-y.html">↪ Título do artigo Y</a>
+    <p class="subtitle">Descrição do artigo Y.</p>
+  </div>
+</div>
+```
+
+Fica como último filho de `.article-body`. Os dois artigos escolhidos são
+sempre os dois seguintes na mesma ordem da seção Artigos do index (com
+retorno ao início): Valor = Função → Casos de estudo com IA → Como um
+portifólio de UX deve ser? → Evoluir é errar → volta ao primeiro — cada
+página pula a si mesma. Ao publicar um artigo novo, revisar a dupla nas
+quatro páginas (a ordem circular muda).
+
 ## Componentes fora do vocabulário padrão
 
 Nada além das equivalências acima deveria aparecer num artigo — mas o artigo

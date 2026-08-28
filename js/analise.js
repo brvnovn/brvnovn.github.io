@@ -168,6 +168,41 @@
     });
   });
 
+  // Troca de topico via scroll do mouse sobre o componente. "Resistencia":
+  // o deltaY acumula ate passar de WHEEL_THRESHOLD antes de disparar uma
+  // troca (nao e 1 tick de scroll = 1 topico), e enquanto uma transicao esta
+  // em andamento (is-veiled) novos deltas sao ignorados — sem isso um scroll
+  // continuo do trackpad dispararia varias trocas em sequencia. Nas bordas
+  // (primeiro/ultimo topico) o gesto e liberado (sem preventDefault) para a
+  // pagina rolar normalmente, em vez de prender o usuario no componente.
+  const WHEEL_THRESHOLD = 240;
+  let wheelAccum = 0;
+
+  root.addEventListener("wheel", (event) => {
+    const direction = event.deltaY > 0 ? 1 : -1;
+    const atStart = cursor === 0 && direction < 0;
+    const atEnd = cursor === topics.length - 1 && direction > 0;
+    if (atStart || atEnd) {
+      wheelAccum = 0;
+      return;
+    }
+
+    event.preventDefault();
+    if (root.classList.contains("is-veiled")) return;
+
+    wheelAccum += event.deltaY;
+    if (Math.abs(wheelAccum) < WHEEL_THRESHOLD) return;
+
+    wheelAccum = 0;
+    transitionTo(cursor + direction);
+  }, { passive: false });
+
+  // Clique fora do componente devolve o cursor ao primeiro topico — mesmo
+  // padrao do fechamento por clique fora dos cards do Acervo (js/acervo.js).
+  document.addEventListener("click", (event) => {
+    if (cursor !== 0 && !root.contains(event.target)) transitionTo(0);
+  });
+
   renderLists();
   updateShot();
   root.classList.add("is-ready");

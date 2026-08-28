@@ -127,17 +127,6 @@ body {
   margin-top: 24px;
 }
 
-/* placeholder de midia: mesmo estilo do card do Acervo (borda, raio e
-   superficie), porem SEM a sombra. Largura fixa multipla de 4; o 4:3 define
-   a altura. */
-.featured-link__media {
-  flex: 0 0 64px;
-  aspect-ratio: 4 / 3;
-  border: 2px solid var(--color-border-soft);
-  border-radius: var(--radius);
-  background: var(--color-surface);
-}
-
 .featured-link__body {
   flex: 1;
   min-width: 0;
@@ -262,7 +251,8 @@ body {
   flex: 0 0 280px;
   scroll-snap-align: start;
   background: var(--color-surface);
-  border: 2px solid var(--color-border-soft);
+  /* mesma borda das midias do artigo (.article-figure__frame, .analise__viewer) */
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius);
   /* branch teste-fundo-linha-sombra: sombra sutil da referencia. Fica fora do
      overflow: hidden (que so recorta o conteudo), entao a capa continua
@@ -681,6 +671,10 @@ ol.article-list li::before {
   text-align: center;
   font-size: var(--text-meta);
   color: var(--color-ink-muted);
+  /* equilibra o comprimento das linhas quando a legenda quebra (bloco de
+     video+diagrama, ~280px): sem isso a quebra deixa uma linha longa e uma
+     curta, em vez de um bloco proporcional. */
+  text-wrap: balance;
 }
 
 /* Citacao / destaque. O fio de 1px e o mesmo dos outros contornos da
@@ -690,6 +684,40 @@ ol.article-list li::before {
   padding-left: 16px;
   border-left: 1px solid var(--color-border);
   color: var(--color-ink-muted);
+}
+
+/* Rodape de artigos relacionados (fim de toda pagina de artigo): 2 colunas,
+   mesma aparencia dos links da secao Artigos do index (.featured-link a +
+   .subtitle) — seta + titulo + descricao, sem miniatura. */
+.article-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 16px;
+  padding-top: 32px;
+  border-top: 1px solid var(--color-divider);
+}
+
+.article-footer__item a {
+  display: block;
+  color: var(--color-link);
+  font-size: var(--text-body);
+  font-weight: 500;
+  /* mesmo titulo de artigo do index (.featured-link a): sem sublinhado —
+     o sublinhado de .article-body a e so para links no meio do texto corrido */
+  text-decoration: none;
+}
+
+.article-footer__item .subtitle {
+  margin-top: 8px;
+  color: var(--color-ink-muted);
+  font-size: var(--text-body);
+}
+
+@media (max-width: 640px) {
+  .article-footer {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Bloco estatico com duas midias lado a lado, cada uma com sua legenda
@@ -1087,6 +1115,12 @@ ol.article-list li::before {
   margin-top: 24px;
 }
 
+/* titulo do cargo com o mesmo peso dos titulos de artigo do index
+   (.featured-link a) — so a primeira linha (cargo + data), nao a da empresa */
+.job-entry .cv-row:first-child .label {
+  font-weight: 500;
+}
+
 .job-entry .bullets {
   margin-top: 12px;
   display: flex;
@@ -1171,16 +1205,17 @@ ol.article-list li::before {
   padding: 4px 0 0;
   font: inherit;
   line-height: 1;
-  letter-spacing: 2px;
   text-align: left;
-  color: var(--color-ink-muted);
+  /* mesma cor e peso dos titulos de artigo do index (.featured-link a) */
+  color: var(--color-link);
+  font-weight: 500;
   cursor: pointer;
   transition: color 0.15s ease, opacity 0.35s ease;
 }
 
 .reveal__toggle:hover,
 .reveal__toggle:focus-visible {
-  color: var(--color-ink);
+  color: var(--color-link);
 }
 
 /* o indicativo vive numa faixa que colapsa (1fr -> 0fr) ao revelar */
@@ -1239,6 +1274,21 @@ ol.article-list li::before {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+/* variante texto (bio): mesmo respiro entre paragrafos que .bio usa entre
+   seus filhos diretos (gap: 24px) — aqui os paragrafos colapsados ficam
+   dentro do reveal__inner, entao o gap tem que ser repetido aqui. */
+.reveal--text .reveal__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* link do artigo citado no 3o paragrafo da bio: peso maior que o corpo do
+   texto (mesmo padrao de seletor por atributo de .aside-menu a[href=...]) */
+.reveal--text a[href="artigo-casos-estudo-ia.html"] {
+  font-weight: 500;
 }
 
 /* variante blocos (Experiencia profissional): o toggle fica na posicao do 2o
