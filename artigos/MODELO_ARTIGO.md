@@ -68,11 +68,12 @@ vinculado a uma imagem e a uma região destacada nela) não cabe nas classes
 de artigo comuns. Se outro artigo precisar de algo parecido, reaproveitar
 esse bloco em vez de criar um novo — não duplicar o padrão.
 
-O mesmo artigo também tem `.article-split` (parágrafo + imagem lado a lado,
-254px/306px, imagem no mesmo tamanho das fotos do `.analise` e cabendo nos
-584px da coluna sem vazar) — usado no diagrama da metodologia de Garrett.
-Reaproveitar para qualquer outro par imagem+texto que precise da mesma
-disposição.
+O mesmo artigo também tem `.article-split` (duas mídias lado a lado, cada
+uma num `<figure class="article-figure">` com sua própria legenda, mesmo
+recorte — `object-fit: cover` — das fotos do `.analise`) — usado para o
+vídeo do protótipo e o diagrama da metodologia de Garrett. As duas mídias
+dividem os 584px da coluna (flex:1 cada, ~280px), sem vazar. Reaproveitar
+para qualquer outro par de mídias que precise da mesma disposição.
 
 ## Ao publicar um artigo novo
 

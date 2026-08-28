@@ -692,27 +692,25 @@ ol.article-list li::before {
   color: var(--color-ink-muted);
 }
 
-/* Bloco estatico texto + imagem (paragrafo da metodologia, artigo "Evoluir
-   e errar"). Foto na direita do corpo, dentro dos 584px da coluna — nunca
-   vaza: foto no mesmo tamanho das imagens do .analise (306px, mesmo
-   aspect-ratio 635/720) e o texto absorve o que sobra (254px). Paragrafo
-   alinhado pela borda superior, nao pelo centro da imagem. Sem estado — so
-   o par imagem/texto lado a lado e reaproveitado do .analise, nao o
-   componente interativo. */
+/* Bloco estatico com duas midias lado a lado, cada uma com sua legenda
+   (video do prototipo + diagrama da metodologia, artigo "Evoluir e errar").
+   Mesmo recorte das fotos do .analise (aspect-ratio 635/720, object-fit
+   cover — cada midia corta o conteudo centralizado em vez de distorcer),
+   mas dividindo os 584px da coluna em vez do tamanho fixo de 306px: as duas
+   juntas nao podem passar da largura do corpo, entao cada .article-figure
+   fica com flex:1 (280px cada, descontado o gap de 24px). */
 .article-split {
   display: flex;
-  align-items: flex-start;
   gap: 24px;
   width: 100%;
 }
 
-.article-split__text {
-  flex: 0 0 254px;
-  margin: 0;
+.article-split > .article-figure {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .article-split__media {
-  flex: 0 0 306px;
   aspect-ratio: 635 / 720;
   border: 1px solid var(--color-border-soft);
   border-radius: var(--radius);
@@ -721,21 +719,27 @@ ol.article-list li::before {
   box-shadow: var(--shadow-card);
 }
 
-.article-split__media img {
+.article-split__media img,
+.article-split__media video {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
+/* video ampliado 20% dentro da propria caixa — o overflow:hidden do
+   .article-split__media corta o excesso, centralizado (transform-origin
+   padrao). Só o video, a imagem do diagrama fica no recorte normal. */
+.article-split__media video {
+  transform: scale(1.2);
+}
+
 @media (max-width: 640px) {
   .article-split {
     flex-direction: column;
-    align-items: stretch;
   }
 
-  .article-split__text,
-  .article-split__media {
+  .article-split > .article-figure {
     flex-basis: auto;
   }
 
