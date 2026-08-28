@@ -127,17 +127,6 @@ body {
   margin-top: 24px;
 }
 
-/* placeholder de midia: mesmo estilo do card do Acervo (borda, raio e
-   superficie), porem SEM a sombra. Largura fixa multipla de 4; o 4:3 define
-   a altura. */
-.featured-link__media {
-  flex: 0 0 64px;
-  aspect-ratio: 4 / 3;
-  border: 2px solid var(--color-border-soft);
-  border-radius: var(--radius);
-  background: var(--color-surface);
-}
-
 .featured-link__body {
   flex: 1;
   min-width: 0;
@@ -262,7 +251,8 @@ body {
   flex: 0 0 280px;
   scroll-snap-align: start;
   background: var(--color-surface);
-  border: 2px solid var(--color-border-soft);
+  /* mesma borda das midias do artigo (.article-figure__frame, .analise__viewer) */
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius);
   /* branch teste-fundo-linha-sombra: sombra sutil da referencia. Fica fora do
      overflow: hidden (que so recorta o conteudo), entao a capa continua
@@ -658,6 +648,12 @@ ol.article-list li::before {
   aspect-ratio: 1 / 1;
 }
 
+/* mesma sombra dos cards do index (--shadow-card): usada so nas midias em
+   destaque do artigo (video do prototipo), nao nos placeholders comuns. */
+.article-figure__frame--shadow {
+  box-shadow: var(--shadow-card);
+}
+
 .article-figure__frame img,
 .article-figure__frame video {
   width: 100%;
@@ -675,6 +671,10 @@ ol.article-list li::before {
   text-align: center;
   font-size: var(--text-meta);
   color: var(--color-ink-muted);
+  /* equilibra o comprimento das linhas quando a legenda quebra (bloco de
+     video+diagrama, ~280px): sem isso a quebra deixa uma linha longa e uma
+     curta, em vez de um bloco proporcional. */
+  text-wrap: balance;
 }
 
 /* Citacao / destaque. O fio de 1px e o mesmo dos outros contornos da
@@ -684,6 +684,388 @@ ol.article-list li::before {
   padding-left: 16px;
   border-left: 1px solid var(--color-border);
   color: var(--color-ink-muted);
+}
+
+/* Rodape de artigos relacionados (fim de toda pagina de artigo): 2 colunas,
+   mesma aparencia dos links da secao Artigos do index (.featured-link a +
+   .subtitle) — seta + titulo + descricao, sem miniatura. */
+.article-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 16px;
+  padding-top: 32px;
+  border-top: 1px solid var(--color-divider);
+}
+
+.article-footer__item a {
+  display: block;
+  color: var(--color-link);
+  font-size: var(--text-body);
+  font-weight: 500;
+  /* mesmo titulo de artigo do index (.featured-link a): sem sublinhado —
+     o sublinhado de .article-body a e so para links no meio do texto corrido */
+  text-decoration: none;
+}
+
+.article-footer__item .subtitle {
+  margin-top: 8px;
+  color: var(--color-ink-muted);
+  font-size: var(--text-body);
+}
+
+@media (max-width: 640px) {
+  .article-footer {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Bloco estatico com duas midias lado a lado, cada uma com sua legenda
+   (video do prototipo + diagrama da metodologia, artigo "Evoluir e errar").
+   Mesmo recorte das fotos do .analise (aspect-ratio 635/720, object-fit
+   cover — cada midia corta o conteudo centralizado em vez de distorcer),
+   mas dividindo os 584px da coluna em vez do tamanho fixo de 306px: as duas
+   juntas nao podem passar da largura do corpo, entao cada .article-figure
+   fica com flex:1 (280px cada, descontado o gap de 24px). */
+.article-split {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+}
+
+.article-split > .article-figure {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.article-split__media {
+  aspect-ratio: 635 / 720;
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--color-bg);
+  box-shadow: var(--shadow-card);
+}
+
+.article-split__media img,
+.article-split__media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* video ampliado 20% dentro da propria caixa — o overflow:hidden do
+   .article-split__media corta o excesso, centralizado (transform-origin
+   padrao). Só o video, a imagem do diagrama fica no recorte normal. */
+.article-split__media video {
+  transform: scale(1.2);
+}
+
+@media (max-width: 640px) {
+  .article-split {
+    flex-direction: column;
+  }
+
+  .article-split > .article-figure {
+    flex-basis: auto;
+  }
+
+  .article-split__media {
+    max-width: 306px;
+  }
+}
+
+/* =====================================================================
+   Componente da secao Analise (artigo "Evoluir e errar")
+   Unico elemento fora do vocabulario do MODELO_ARTIGO.md: uma imagem que
+   troca conforme o topico lido ao lado, com um retangulo de destaque sobre
+   a regiao do print que o paragrafo critica. O corpo vaza a coluna do
+   artigo (584px) desde o primeiro paint — foto em 306px (85% do tamanho
+   original, o teto de reducao pedido) e coluna de texto em 406px (508px
+   menos 20%). width:max-content escapa do stretch de largura fixa herdado
+   do .article-body (flex column), que e o que faz o corpo vazar para a
+   direita.
+   Todas as transicoes reusam o par blur+opacidade+translateY ja usado no
+   crossfade dos cards (.card-layer--veiled) e no reveal (.reveal__inner);
+   o clique usa a mesma reducao de 3% do .card--pressed (js/acervo.js).
+
+   Duas linhas de grid: a dica ("Clique sobre o topico...") fica na
+   primeira, fora do recorte de altura da foto, mas alinhada horizontalmente
+   a coluna de texto (mesma coluna 2). Viewer e leitura ocupam a segunda
+   linha, lado a lado — e e so essa linha que precisa caber na altura da
+   foto (ver .analise__leitura). */
+.analise {
+  display: grid;
+  width: max-content;
+  grid-template-columns: 306px 406px;
+  grid-template-rows: auto auto;
+  column-gap: 24px;
+  row-gap: 16px;
+}
+
+.analise__dica {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  font-size: var(--text-meta);
+  color: var(--color-ink-muted);
+}
+
+.analise__viewer {
+  grid-column: 1;
+  grid-row: 2;
+  position: relative;
+  aspect-ratio: 635 / 720;
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--color-bg);
+  box-shadow: var(--shadow-card);
+}
+
+.analise__shot {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  filter: blur(12px);
+  transition: opacity 0.35s ease, filter 0.35s ease;
+}
+
+.analise__shot.is-active {
+  opacity: 1;
+  filter: none;
+  z-index: 1;
+}
+
+.analise__shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.analise__highlight {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  height: var(--h);
+  border-radius: var(--radius-inner);
+  background: var(--color-highlight);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.analise__highlight.is-visible {
+  opacity: 1;
+}
+
+/* altura travada na altura da foto (306px de largura, aspect-ratio 635/720
+   => ~347px) — o "elemento de paragrafos" (historico + ativo + fila) tem
+   que caber exatamente ate o fim da imagem, nao mais que isso. historico e
+   o paragrafo ativo pegam a altura que precisam; a fila (flex:1) absorve
+   o que sobra e e ela quem teve o overflow+degrade — ver .analise__fila. */
+.analise__leitura {
+  grid-column: 2;
+  grid-row: 2;
+  height: 347px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.analise__historico,
+.analise__topicos,
+.analise__fila {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.analise__historico:empty {
+  display: none;
+}
+
+/* traco do historico: um topico colapsado. Mesma largura do divisor de
+   Ferramentas (.skill-list__divider) — curto, nao uma regua que ocupa a
+   coluna inteira — mas com a mesma grossura (2px) do fio que destaca o
+   paragrafo ativo, para os dois lerem como a mesma linguagem de "marcador
+   de paragrafo". Pontas arredondadas (border-radius) nos dois.
+   O espacamento entre tracos vira `gap` (nao margin colapsavel): um unico
+   numero para ajustar, sem depender de como margins vizinhas se combinam. */
+.analise__historico {
+  display: flex;
+  flex-direction: column;
+  /* reduzido a 1/3 do espacamento anterior entre tracos (16px -> 5,33px) */
+  gap: calc(16px / 3);
+  /* mantem o respiro entre o ultimo traco colapsado e o paragrafo em
+     destaque logo abaixo — esse valor nao mudou. */
+  margin-bottom: 16px;
+}
+
+/* Magnificacao por proximidade do mouse (JS seta --proximity de 0 a 1 por
+   traco, ver js/analise.js) — o traco mais perto do cursor alarga e escurece,
+   os vizinhos seguem o mesmo movimento em degrade, como o dock do macOS.
+   Repouso em 12px (metade do tamanho antigo); no pico da magnificacao
+   (proximity 1) o traco chega aos 24px que era o comprimento de repouso
+   anterior. Sem JS (ou fora do :hover), --proximity fica em 0 e o traco
+   volta ao tamanho/cor padrao. */
+.analise__historico button {
+  appearance: none;
+  position: relative;
+  display: block;
+  width: calc(12px + var(--proximity, 0) * 12px);
+  height: 2px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--color-link) calc(var(--proximity, 0) * 100%), var(--color-border));
+  cursor: pointer;
+  transition: width 0.1s ease, background 0.1s ease, transform 0.12s ease;
+}
+
+/* area de toque 3x maior que a linha visivel (2px -> 6px), centralizada no
+   mesmo eixo vertical do traco — o traco em si nao cresce, so a regiao que
+   aceita o clique/toque ao redor dele. */
+.analise__historico button::before {
+  content: "";
+  position: absolute;
+  inset: -2px 0;
+}
+
+.analise__historico button:hover,
+.analise__historico button:focus-visible {
+  background: var(--color-link);
+}
+
+/* Fila: todos os topicos seguintes, nao so o proximo. flex:1 faz a fila
+   herdar o que sobrar de altura depois do historico e do paragrafo ativo
+   dentro dos 347px fixos de .analise__leitura — a base do calculo e o fim
+   da imagem, nao um numero fixo aqui. min-height:0 e o que permite um item
+   flex encolher abaixo do tamanho do conteudo (senao overflow:hidden nao
+   segura nada). O mask-image apaga em degrade o que nao coube, terminando
+   em opacidade zero exatamente na borda de baixo (nao um corte seco). */
+.analise__fila {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 16px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 100%);
+}
+
+.analise__fila li + li {
+  margin-top: 16px;
+}
+
+.analise__item--fila {
+  color: var(--color-ink-muted);
+}
+
+.analise__item--fila button {
+  appearance: none;
+  display: block;
+  width: 100%;
+  border: 0;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  transition: color 0.15s ease, transform 0.12s ease;
+}
+
+.analise__item--fila button:hover,
+.analise__item--fila button:focus-visible {
+  color: var(--color-ink);
+}
+
+/* o fio azul vira um elemento proprio (pseudo) em vez de border-left: um
+   border nao aceita border-radius so numa lateral sem arredondar a caixa
+   inteira, e a linha precisa das pontas arredondadas, igual ao traco do
+   historico. */
+.analise__item--ativo p {
+  position: relative;
+  margin: 0;
+  padding-left: 16px;
+  color: var(--color-ink);
+}
+
+.analise__item--ativo p::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  border-radius: 9999px;
+  background: var(--color-link);
+}
+
+/* redução de 3% no clique, espelhando .card--pressed (js/acervo.js) */
+.analise__historico button.is-pressed,
+.analise__item--fila button.is-pressed {
+  transform: scale(0.97);
+}
+
+/* troca de estado do bloco inteiro (historico + topicos + fila): sai e
+   entra com blur+opacidade+deslocamento, em 0.18s — mais rapido que o
+   crossfade padrao do site (0.35s), para a resposta ao clique ficar mais
+   direta. O reflow acontece enquanto o bloco esta velado (classe no
+   proprio .analise), entao a mudanca de altura nao pisca. */
+.analise__historico,
+.analise__topicos,
+.analise__fila {
+  opacity: 1;
+  filter: none;
+  transform: none;
+  transition: opacity 0.18s ease, filter 0.18s ease, transform 0.18s ease;
+}
+
+.analise.is-veiled .analise__historico,
+.analise.is-veiled .analise__topicos,
+.analise.is-veiled .analise__fila {
+  opacity: 0;
+  filter: blur(12px);
+  transform: translateY(8px);
+}
+
+@media (max-width: 640px) {
+  .analise {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  /* uma coluna so: volta ao posicionamento automatico (ordem do HTML —
+     dica, viewer, leitura) em vez das linhas/colunas explicitas do desktop. */
+  .analise__dica,
+  .analise__viewer,
+  .analise__leitura {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .analise__viewer {
+    max-width: 306px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .analise__shot,
+  .analise__highlight,
+  .analise__historico button,
+  .analise__item--fila button,
+  .analise__historico,
+  .analise__topicos,
+  .analise__fila {
+    transition: none;
+  }
 }
 
 /* Curriculo */
@@ -731,6 +1113,12 @@ ol.article-list li::before {
 
 .job-entry + .job-entry {
   margin-top: 24px;
+}
+
+/* titulo do cargo com o mesmo peso dos titulos de artigo do index
+   (.featured-link a) — so a primeira linha (cargo + data), nao a da empresa */
+.job-entry .cv-row:first-child .label {
+  font-weight: 500;
 }
 
 .job-entry .bullets {
@@ -817,16 +1205,17 @@ ol.article-list li::before {
   padding: 4px 0 0;
   font: inherit;
   line-height: 1;
-  letter-spacing: 2px;
   text-align: left;
-  color: var(--color-ink-muted);
+  /* mesma cor e peso dos titulos de artigo do index (.featured-link a) */
+  color: var(--color-link);
+  font-weight: 500;
   cursor: pointer;
   transition: color 0.15s ease, opacity 0.35s ease;
 }
 
 .reveal__toggle:hover,
 .reveal__toggle:focus-visible {
-  color: var(--color-ink);
+  color: var(--color-link);
 }
 
 /* o indicativo vive numa faixa que colapsa (1fr -> 0fr) ao revelar */
@@ -885,6 +1274,21 @@ ol.article-list li::before {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+/* variante texto (bio): mesmo respiro entre paragrafos que .bio usa entre
+   seus filhos diretos (gap: 24px) — aqui os paragrafos colapsados ficam
+   dentro do reveal__inner, entao o gap tem que ser repetido aqui. */
+.reveal--text .reveal__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* link do artigo citado no 3o paragrafo da bio: peso maior que o corpo do
+   texto (mesmo padrao de seletor por atributo de .aside-menu a[href=...]) */
+.reveal--text a[href="artigo-casos-estudo-ia.html"] {
+  font-weight: 500;
 }
 
 /* variante blocos (Experiencia profissional): o toggle fica na posicao do 2o

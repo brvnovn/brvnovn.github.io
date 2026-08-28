@@ -9,6 +9,7 @@ marcação abaixo.
 | Como um portifólio de UX deve ser? | `como-um-portifolio-de-ux-deve-ser.md` | `artigo-portfolio-ux.html` |
 | Valor = Função | `valor-igual-funcao.md` | `artigo-valor-funcao.html` |
 | Casos de estudo com programação assistida por IA | `casos-de-estudo-com-ia.md` | `artigo-casos-estudo-ia.html` |
+| Evoluir é errar | `notas_artigo_errar 1.md` | `artigo-evoluir-e-errar.html` |
 
 Só o miolo do `<div class="article-body">` é substituído. Cabeçalho, menu
 lateral e `<head>` da página permanecem.
@@ -56,6 +57,49 @@ Quando a imagem chegar, ela substitui o `<span>` e o resto fica igual:
 
 Proporção do frame: `4:3` é o padrão; `article-figure__frame--wide` dá 16:9
 (usado nas aberturas) e `article-figure__frame--square` dá 1:1.
+
+## Rodapé de artigos relacionados
+
+Toda página de artigo termina com um rodapé de 2 colunas destacando outros
+dois artigos do site — mesma aparência dos links da seção Artigos do index
+(seta + título + descrição), sem miniatura:
+
+```html
+<div class="article-footer">
+  <div class="article-footer__item">
+    <a href="artigo-x.html">↪ Título do artigo X</a>
+    <p class="subtitle">Descrição do artigo X.</p>
+  </div>
+  <div class="article-footer__item">
+    <a href="artigo-y.html">↪ Título do artigo Y</a>
+    <p class="subtitle">Descrição do artigo Y.</p>
+  </div>
+</div>
+```
+
+Fica como último filho de `.article-body`. Os dois artigos escolhidos são
+sempre os dois seguintes na mesma ordem da seção Artigos do index (com
+retorno ao início): Valor = Função → Casos de estudo com IA → Como um
+portifólio de UX deve ser? → Evoluir é errar → volta ao primeiro — cada
+página pula a si mesma. Ao publicar um artigo novo, revisar a dupla nas
+quatro páginas (a ordem circular muda).
+
+## Componentes fora do vocabulário padrão
+
+Nada além das equivalências acima deveria aparecer num artigo — mas o artigo
+"Evoluir é errar" tem uma exceção registrada: a seção Análise usa um
+componente interativo próprio (`.analise`, em `css/style.css` e
+`js/analise.js`), porque o conteúdo (dez pontos de crítica, cada um
+vinculado a uma imagem e a uma região destacada nela) não cabe nas classes
+de artigo comuns. Se outro artigo precisar de algo parecido, reaproveitar
+esse bloco em vez de criar um novo — não duplicar o padrão.
+
+O mesmo artigo também tem `.article-split` (duas mídias lado a lado, cada
+uma num `<figure class="article-figure">` com sua própria legenda, mesmo
+recorte — `object-fit: cover` — das fotos do `.analise`) — usado para o
+vídeo do protótipo e o diagrama da metodologia de Garrett. As duas mídias
+dividem os 584px da coluna (flex:1 cada, ~280px), sem vazar. Reaproveitar
+para qualquer outro par de mídias que precise da mesma disposição.
 
 ## Ao publicar um artigo novo
 
