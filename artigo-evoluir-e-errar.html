@@ -33,64 +33,84 @@
       <span class="subtitle">Uma revisão crítica dos meus primeiros projetos.</span>
     </header>
 
-    <!-- Conteúdo provisório: estrutura de estudo de caso e teste de
-         formatação, igual às demais páginas de artigo. Substituir pelo texto
-         final mantendo as mesmas classes (ver artigos/MODELO_ARTIGO.md). -->
     <div class="article-body">
+      <p>Como proposta de estudo, resolvi revisitar o primeiro projeto de UX que fiz parte do desenvolvimento e propor melhorias.</p>
+
       <figure class="article-figure">
-        <div class="article-figure__frame article-figure__frame--wide">
-          <span class="article-figure__placeholder">imagem de abertura — 16:9</span>
+        <div class="article-figure__frame article-figure__frame--wide article-figure__frame--shadow">
+          <img src="img/artigos/pix-caixa-capa.png" alt="Capa do projeto Redesign Função PIX, com o título em branco sobre fundo em degradê laranja e a tela inicial do app ao lado.">
         </div>
-        <figcaption class="article-caption">Imagem 01 — legenda da imagem de abertura</figcaption>
+        <figcaption class="article-caption">Capa que o projeto tinha quando lançado</figcaption>
       </figure>
 
       <h2>Contexto</h2>
-      <p>Parágrafo de exemplo, presente aqui para conferir a medida de linha, a entrelinha e o contraste do corpo de 14px dentro da coluna de 584px. O texto definitivo entra no lugar deste bloco sem alterar a marcação ao redor.</p>
-      <p>Segundo parágrafo, para verificar o espaço entre blocos de texto corrido. Um <a href="index.html">link no meio da frase</a> aparece sublinhado, para se distinguir do texto mesmo quando a cor não basta.</p>
-
-      <h2>A hipótese</h2>
-      <p>Enunciado curto do que o estudo de caso pretende demonstrar, seguido dos pontos que o sustentam.</p>
-      <ul class="article-list">
-        <li>Primeiro item da lista sem numeração, com o texto alinhado à margem da coluna.</li>
-        <li>Segundo item, um pouco mais longo, para ver como a quebra de linha se comporta quando o texto passa de uma única linha dentro do item.</li>
-        <li>Terceiro item.</li>
-      </ul>
-
-      <h2>Como foi medido</h2>
-      <p>Parágrafo que apresenta o método antes de detalhar cada parte dele.</p>
-
-      <h3>Critérios</h3>
-      <p>Subseção usada para separar as partes dentro de um mesmo bloco, sem criar uma seção nova.</p>
-
-      <h3>Comparação</h3>
-      <p>Segunda subseção, para confirmar o respiro entre uma subseção e a anterior.</p>
+      <p>Produzido em 2021, o projeto foi o trabalho final da matéria optativa "Experiência do Usuário" do curso de D. Gráfico, servindo como primeira experiência do grupo com a temática.</p>
+      <p>A problemática central do projeto era buscar pontos de atrito na interação da terceira idade com as novas tecnologias.</p>
+      <p>O case teve a finalidade de repensar o fluxo de interação da função PIX, até então novidade como opção para pagamentos no Brasil. O foco da proposta era tornar o processo mais claro e intuitivo aos usuários do aplicativo do banco CAIXA, principalmente os mais velhos.</p>
+      <p>O principal agravante colhido na análise do fluxo do aplicativo estava na dificuldade de encontrar e preencher dados durante a transferência, função escondida por um menu lateral, botões semelhantes e uma única tela vertical extensa para preencher todos os campos e etapas.</p>
 
       <figure class="article-figure">
-        <div class="article-figure__frame">
-          <span class="article-figure__placeholder">quadro comparativo — 4:3</span>
+        <div class="article-figure__frame article-figure__frame--wide article-figure__frame--shadow">
+          <img src="img/artigos/pix-caixa-telas.png" alt="Três telas do app lado a lado: menu lateral do PIX, tela inicial do internet banking e tela de pagamento via PIX.">
         </div>
-        <figcaption class="article-caption">Imagem 02 — legenda da imagem no meio do texto</figcaption>
+        <figcaption class="article-caption">A: menu lateral · B: tela inicial do app · C: tela única para o PIX</figcaption>
       </figure>
 
-      <h2>Decisões de projeto</h2>
-      <p>Quando a ordem das decisões importa, a lista é numerada.</p>
-      <ol class="article-list">
-        <li>Primeira decisão, com a justificativa que a sustenta.</li>
-        <li>Segunda decisão, também com uma frase de justificativa logo em seguida para manter o padrão.</li>
-        <li>Terceira decisão.</li>
-      </ol>
+      <p>A metodologia usada para o desenvolvimento do redesenho foi a proposta de J.J. Garrett em seu livro The Elements of User Experience, sendo guia metodológico da disciplina. Adiante, avalio como essa condição influenciou na progressão do resultado final.</p>
 
-      <h2>Resultado</h2>
-      <p>Fechamento do estudo de caso: o que mudou depois das decisões acima.</p>
-      <blockquote class="article-quote">Citação ou destaque, para trechos de entrevista, falas de usuários e frases que valem ser lidas fora do corpo do texto.</blockquote>
+      <figure class="article-figure">
+        <div class="article-figure__frame article-figure__frame--wide article-figure__frame--shadow">
+          <video class="card-content__player" src="videos/pix_caixa.mp4" autoplay loop controls muted playsinline></video>
+        </div>
+        <figcaption class="article-caption">Registro de interação com o protótipo desenvolvido no Figma com artefato de entrega do trabalho.</figcaption>
+      </figure>
 
-      <h2>Aprendizados</h2>
-      <ul class="article-list">
-        <li>Primeiro aprendizado.</li>
-        <li>Segundo aprendizado.</li>
-      </ul>
+      <h2>Análise</h2>
+
+      <p>Com um levantamento rápido no vídeo do protótipo e uma revisão de heurísticas e convenções de usabilidade, foi possível captar os seguintes pontos de carência na interface:</p>
+
+      <div class="analise" data-analise>
+        <div class="analise__viewer">
+          <figure class="analise__shot" data-shot="1">
+            <img src="img/artigos/pix-caixa-home.png" alt="Tela inicial do app, com cards de acesso rápido em outline e banners do Mural Caixa em estilos de preenchimento diferentes.">
+            <span class="analise__highlight" style="--x: 18%; --y: 67%; --w: 79%; --h: 32%;"></span>
+          </figure>
+          <figure class="analise__shot" data-shot="2">
+            <img src="img/artigos/pix-caixa-pix.png" alt="Tela do PIX, com cabeçalho em degradê azul acima de uma faixa de botões em outline.">
+            <span class="analise__highlight" style="--x: 0%; --y: 0%; --w: 100%; --h: 32%;"></span>
+          </figure>
+          <figure class="analise__shot" data-shot="3">
+            <img src="img/artigos/pix-caixa-descricao.png" alt="Tela de descrição do PIX, com o campo de texto colado ao bloco azul de agendamento logo abaixo.">
+            <span class="analise__highlight" style="--x: 21%; --y: 38%; --w: 62%; --h: 47%;"></span>
+          </figure>
+        </div>
+
+        <div class="analise__leitura">
+          <p class="analise__dica">↓ Clique sobre o tópico para interagir</p>
+          <ol class="analise__historico" data-historico></ol>
+          <ol class="analise__topicos" data-topicos>
+            <li data-topico data-shot="1">Elementos da identidade não conversam, botões e banners parecem frutos de identidades diferentes; ora escolha por preenchimento e degradês, em outros elementos puramente outline. Acredito que essa ambiguidade nasce de uma restrição do escopo original: atualizar os elementos que faziam parte do novo fluxo, porém preservando aspectos e a filosofia geral da identidade antiga, já que o foco não era um rebranding visual completo.</li>
+            <li data-topico data-shot="2">Existe um atrito visível entre a identidade escolhida e a linguagem visual do sistema escolhido para a aplicação (iOS). Entretanto, é justo considerar que o aplicativo era uma primeira tentativa séria do grupo com a ferramenta e ainda não existiam componentes pré-fabricados como atualmente.</li>
+            <li data-topico data-shot="3">É relevante considerar que os espaços das interfaces poderiam ser melhor distribuídos, dado que alguns exemplos demonstram uma concorrência visual entre elementos muito próximos e espaços negativos excessivos. Muito provável que o impasse seja fruto da restrição de redesign parcial.</li>
+            <li data-topico>Pesos textuais muito discrepantes entre títulos de sessão e corpo de texto. Também ocorre uma escolha injustificada de textos em caixa alta em alguns componentes informativos. A escolha de fonte principal também soa equivocada, pois prioriza estética pela legibilidade.</li>
+            <li data-topico>Espaçamento entre texto e elementos muito apertado, gerando dificuldade de absorver a informação e leitura.</li>
+            <li data-topico>Escolha leiga para indicadores de status entre as telas, poderia ser mais eficiente e menos redundante.</li>
+            <li data-topico>UX writing amador nas telas de carregamento. Houve a priorização de uma voz paternalista/emocional (provavelmente fruto de uma escolha de narrativa para o rebranding) em detrimento de instruções claras sobre o que está acontecendo.</li>
+            <li data-topico>Falta refinamento no alinhamento de textos e espaçamento apropriado em alguns botões da interface. As bordas dos elementos também carecem de um design system harmonioso.</li>
+            <li data-topico>Apesar da escolha de animações para a troca de telas do protótipo refletir a ideia de progressão, ainda tem um ritmo lento para a função, principalmente em casos onde ela pode ser repetida várias vezes ao longo de um dia.</li>
+            <li data-topico>Carência de uma configuração para alterar o tamanho dos textos e elementos da interface, requisito essencial pensando na acessibilidade do público alvo trabalhado.</li>
+          </ol>
+        </div>
+      </div>
+
+      <h2>Conclusão</h2>
+      <p>Avalio em retrospecto como a fundamentação do projeto na metodologia de Garrett causou um engessamento no refinamento do produto. A principal crítica feita a esse sistema está relacionada ao seu caráter datado, qual representa um fluxo de desenvolvimento de soluções de software do início dos anos 2000 focado na construção, porém carente de processos iterativos adotados por metodologias modernas. É possível imaginar como uso de testes com o público alvo destacariam boa parte dos pontos analisados anteriormente.</p>
+      <p>Ainda sobre o modelo, também é relevante destacar sua superficialidade ao generalizar conceitos complexos das etapas em frases simples, sem uma fragmentação de processos e seus resultados esperados. Por essa ótica, é possível prever como o ponto de partida com certo nível de abstração afetou o resultado.</p>
+      <p>Outros fatores a se considerar para as pontas soltas são o repertório acadêmico extremamente gráfico e ainda introdutório dos autores, somadas ao tempo reduzido para atingir um estado palpável para a aplicação e o caráter fracionado de desenvolvimento durante o decorrer do curso.</p>
+      <p>Por fim, a aplicação reflete a primeira experiência dos estudantes com a área e ferramenta (Figma), carecendo de uma visão mais aguçada sobre a influência dos pequenos detalhes na usabilidade final. Todavia, o artefato cumpre com seu objetivo geral de reformular a experiência e navegação do aplicativo para um processo mais claro e agradável para o usuário.</p>
     </div>
   </main>
   <script src="js/copiar-email.js" defer></script>
+  <script src="js/analise.js" defer></script>
 </body>
 </html>

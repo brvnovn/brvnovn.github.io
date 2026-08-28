@@ -23,6 +23,7 @@ literal, nao aproximado.
   --color-border-soft: #e4e4e3; /* divisores mais sutis */
   --color-divider: #dddddd;   /* linha divisoria da referencia, amostrada */
   --color-link: #0099ff;
+  --color-highlight: rgba(0, 153, 255, 0.5); /* --color-link a 50% — destaque sobre print, componente .analise */
 
   /* Sombra do card, derivada por amostragem do exemplo (scan de pixel ao
      redor do mockup): a queda de luminancia vai de ~22 niveis colada na

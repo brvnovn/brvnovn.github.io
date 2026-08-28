@@ -658,6 +658,12 @@ ol.article-list li::before {
   aspect-ratio: 1 / 1;
 }
 
+/* mesma sombra dos cards do index (--shadow-card): usada so nas midias em
+   destaque do artigo (video do prototipo), nao nos placeholders comuns. */
+.article-figure__frame--shadow {
+  box-shadow: var(--shadow-card);
+}
+
 .article-figure__frame img,
 .article-figure__frame video {
   width: 100%;
@@ -684,6 +690,236 @@ ol.article-list li::before {
   padding-left: 16px;
   border-left: 1px solid var(--color-border);
   color: var(--color-ink-muted);
+}
+
+/* =====================================================================
+   Componente da secao Analise (artigo "Evoluir e errar")
+   Unico elemento fora do vocabulario do MODELO_ARTIGO.md: uma imagem que
+   troca conforme o topico lido ao lado, com um retangulo de destaque sobre
+   a regiao do print que o paragrafo critica. O corpo vaza a coluna do
+   artigo (584px) desde o primeiro paint — foto em 306px (85% do tamanho
+   original, o teto de reducao pedido) e coluna de texto em 508px, o dobro
+   do espaco que caberia dentro dos 584px. width:max-content escapa do
+   stretch de largura fixa herdado do .article-body (flex column), que e o
+   que faz o corpo vazar para a direita.
+   Todas as transicoes reusam o par blur+opacidade+translateY ja usado no
+   crossfade dos cards (.card-layer--veiled) e no reveal (.reveal__inner);
+   o clique usa a mesma reducao de 3% do .card--pressed (js/acervo.js).
+   ===================================================================== */
+.analise {
+  display: grid;
+  width: max-content;
+  grid-template-columns: 306px 508px;
+  gap: 24px;
+  align-items: start;
+}
+
+.analise__viewer {
+  position: relative;
+  aspect-ratio: 635 / 720;
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--color-bg);
+  box-shadow: var(--shadow-card);
+}
+
+.analise__shot {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  filter: blur(12px);
+  transition: opacity 0.35s ease, filter 0.35s ease;
+}
+
+.analise__shot.is-active {
+  opacity: 1;
+  filter: none;
+  z-index: 1;
+}
+
+.analise__shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.analise__highlight {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  height: var(--h);
+  border-radius: var(--radius-inner);
+  background: var(--color-highlight);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.analise__highlight.is-visible {
+  opacity: 1;
+}
+
+.analise__leitura {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.analise__dica {
+  margin: 0 0 16px;
+  font-size: var(--text-meta);
+  color: var(--color-ink-muted);
+}
+
+.analise__historico,
+.analise__topicos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.analise__historico:empty {
+  display: none;
+}
+
+/* linha do historico: um topico colapsado. Mesma largura do divisor de
+   Ferramentas (.skill-list__divider) — um traco curto, nao uma regua que
+   ocupa a coluna inteira — mas com a mesma grossura (2px) do fio que
+   destaca o paragrafo ativo, para os dois lerem como a mesma linguagem de
+   "marcador de paragrafo". Pontas arredondadas (border-radius) nos dois. */
+.analise__historico li + li {
+  margin-top: 4px;
+}
+
+.analise__historico button {
+  appearance: none;
+  position: relative;
+  display: block;
+  width: 24px;
+  height: 2px;
+  /* dobrado (8px -> 16px): mais respiro entre o ultimo traco colapsado e o
+     paragrafo em destaque logo abaixo. */
+  margin: 16px 0;
+  padding: 0;
+  border: 0;
+  border-radius: 9999px;
+  background: var(--color-border);
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.12s ease;
+}
+
+/* area de toque 3x maior que a linha visivel (2px -> 6px), centralizada no
+   mesmo eixo vertical do traco — o traco em si nao cresce, so a regiao que
+   aceita o clique/toque ao redor dele. */
+.analise__historico button::before {
+  content: "";
+  position: absolute;
+  inset: -2px 0;
+}
+
+.analise__historico button:hover,
+.analise__historico button:focus-visible {
+  background: var(--color-link);
+}
+
+.analise__topicos li + li {
+  margin-top: 16px;
+}
+
+.analise__item--fila {
+  color: var(--color-ink-muted);
+}
+
+.analise__item--fila button {
+  appearance: none;
+  display: block;
+  width: 100%;
+  border: 0;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  transition: color 0.15s ease, transform 0.12s ease;
+}
+
+.analise__item--fila button:hover,
+.analise__item--fila button:focus-visible {
+  color: var(--color-ink);
+}
+
+/* o fio azul vira um elemento proprio (pseudo) em vez de border-left: um
+   border nao aceita border-radius so numa lateral sem arredondar a caixa
+   inteira, e a linha precisa das pontas arredondadas, igual ao traco do
+   historico. */
+.analise__item--ativo p {
+  position: relative;
+  margin: 0;
+  padding-left: 16px;
+  color: var(--color-ink);
+}
+
+.analise__item--ativo p::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  border-radius: 9999px;
+  background: var(--color-link);
+}
+
+/* redução de 3% no clique, espelhando .card--pressed (js/acervo.js) */
+.analise__historico button.is-pressed,
+.analise__item--fila button.is-pressed {
+  transform: scale(0.97);
+}
+
+/* troca de estado do bloco inteiro (historico + topicos): sai e entra com o
+   mesmo par blur+opacidade+translateY do resto do site. O reflow acontece
+   enquanto o bloco esta velado (classe no proprio .analise), entao a
+   mudanca de altura nao pisca. */
+.analise__historico,
+.analise__topicos {
+  opacity: 1;
+  filter: none;
+  transform: none;
+  transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease;
+}
+
+.analise.is-veiled .analise__historico,
+.analise.is-veiled .analise__topicos {
+  opacity: 0;
+  filter: blur(12px);
+  transform: translateY(8px);
+}
+
+@media (max-width: 640px) {
+  .analise {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .analise__viewer {
+    max-width: 306px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .analise__shot,
+  .analise__highlight,
+  .analise__historico button,
+  .analise__item--fila button,
+  .analise__historico,
+  .analise__topicos {
+    transition: none;
+  }
 }
 
 /* Curriculo */

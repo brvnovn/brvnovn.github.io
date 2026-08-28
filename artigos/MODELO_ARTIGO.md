@@ -9,6 +9,7 @@ marcação abaixo.
 | Como um portifólio de UX deve ser? | `como-um-portifolio-de-ux-deve-ser.md` | `artigo-portfolio-ux.html` |
 | Valor = Função | `valor-igual-funcao.md` | `artigo-valor-funcao.html` |
 | Casos de estudo com programação assistida por IA | `casos-de-estudo-com-ia.md` | `artigo-casos-estudo-ia.html` |
+| Evoluir é errar | `notas_artigo_errar 1.md` | `artigo-evoluir-e-errar.html` |
 
 Só o miolo do `<div class="article-body">` é substituído. Cabeçalho, menu
 lateral e `<head>` da página permanecem.
@@ -56,6 +57,16 @@ Quando a imagem chegar, ela substitui o `<span>` e o resto fica igual:
 
 Proporção do frame: `4:3` é o padrão; `article-figure__frame--wide` dá 16:9
 (usado nas aberturas) e `article-figure__frame--square` dá 1:1.
+
+## Componentes fora do vocabulário padrão
+
+Nada além das equivalências acima deveria aparecer num artigo — mas o artigo
+"Evoluir é errar" tem uma exceção registrada: a seção Análise usa um
+componente interativo próprio (`.analise`, em `css/style.css` e
+`js/analise.js`), porque o conteúdo (dez pontos de crítica, cada um
+vinculado a uma imagem e a uma região destacada nela) não cabe nas classes
+de artigo comuns. Se outro artigo precisar de algo parecido, reaproveitar
+esse bloco em vez de criar um novo — não duplicar o padrão.
 
 ## Ao publicar um artigo novo
 

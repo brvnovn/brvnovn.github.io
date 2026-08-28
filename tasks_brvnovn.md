@@ -7,7 +7,7 @@ O Claude deve marcar como concluído o item dessa lista após sua implementaçã
 - [x] Deixe todos os títulos de sessões das páginas na cor cinza que viemos usando.
 - [x] reduza 1/3 do espaçamento superior da pagina.
 1. [x] adaptar o conteúdo para o mobile em uma branch de teste
-2. [ ] fazer um branch que reuna os nome e cargo + dados de contato + botão currículo no meu lateral
+2. [x] fazer um branch que reuna os nome e cargo + dados de contato + botão currículo no meu lateral
 3. [x] ao clicar sobre os cards, o componente deve sofrer uma animação de redução de 3% antes de abrir, mostrando sua responsividade ao clique.
 4. [x] essa regra de animação e responsividade também deve ser aplicada a cada div da sessão de artigos e ao botão de curriculo, alem dos botões do menu
 5. [x] desfaça as alterações apenas relativas aos raios das bordas redondas para antes de aplicarmos o calculo para interno e externo. Todo o resto se mantem. Bordas internas e externas do card com 8px.
@@ -24,3 +24,4 @@ O Claude deve marcar como concluído o item dessa lista após sua implementaçã
 16. [x] corrija para que o botão inicio siga o mesmo peso que o botão currículo e commite as alterações em aberto.
 17. [x] em vez de após (abaixo) do componente de nome, os botões do menu devem estar ao lado direito do componente de nome, alinhados a direita do corpo da pagina. essa configuração só deve valer para a quebra de pagina que intermediaria (breakpoint ~1245px); no mobile completo (<=640px) mantém o empilhamento vertical. 
 18. [x] altere o icone no final do nome para a linha descritiva debaixo, antes do texto. confira em todas as paginas.
+19. [x] configurar a página do artigo "Evoluir é errar": conteúdo textual baseado em `artigos/notas_artigo_errar 1.md`, imagens de `refs/artigo 01/`, e o componente interativo da seção Análise (carrossel vertical de tópicos com imagem e destaque vinculados, histórico colapsável, animações de blur). Teste inicial com os 3 primeiros tópicos com destaque.
