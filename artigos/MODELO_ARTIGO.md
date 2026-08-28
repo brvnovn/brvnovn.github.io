@@ -68,6 +68,12 @@ vinculado a uma imagem e a uma região destacada nela) não cabe nas classes
 de artigo comuns. Se outro artigo precisar de algo parecido, reaproveitar
 esse bloco em vez de criar um novo — não duplicar o padrão.
 
+O mesmo artigo também tem `.article-split` (parágrafo + imagem lado a lado,
+254px/306px, imagem no mesmo tamanho das fotos do `.analise` e cabendo nos
+584px da coluna sem vazar) — usado no diagrama da metodologia de Garrett.
+Reaproveitar para qualquer outro par imagem+texto que precise da mesma
+disposição.
+
 ## Ao publicar um artigo novo
 
 1. Duplicar uma das três páginas existentes e trocar título, `<title>` e miolo.
