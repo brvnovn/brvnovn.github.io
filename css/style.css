@@ -705,16 +705,32 @@ ol.article-list li::before {
    Todas as transicoes reusam o par blur+opacidade+translateY ja usado no
    crossfade dos cards (.card-layer--veiled) e no reveal (.reveal__inner);
    o clique usa a mesma reducao de 3% do .card--pressed (js/acervo.js).
-   ===================================================================== */
+
+   Duas linhas de grid: a dica ("Clique sobre o topico...") fica na
+   primeira, fora do recorte de altura da foto, mas alinhada horizontalmente
+   a coluna de texto (mesma coluna 2). Viewer e leitura ocupam a segunda
+   linha, lado a lado — e e so essa linha que precisa caber na altura da
+   foto (ver .analise__leitura). */
 .analise {
   display: grid;
   width: max-content;
   grid-template-columns: 306px 508px;
-  gap: 24px;
-  align-items: start;
+  grid-template-rows: auto auto;
+  column-gap: 24px;
+  row-gap: 16px;
+}
+
+.analise__dica {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  font-size: var(--text-meta);
+  color: var(--color-ink-muted);
 }
 
 .analise__viewer {
+  grid-column: 1;
+  grid-row: 2;
   position: relative;
   aspect-ratio: 635 / 720;
   border: 1px solid var(--color-border-soft);
@@ -762,20 +778,24 @@ ol.article-list li::before {
   opacity: 1;
 }
 
+/* altura travada na altura da foto (306px de largura, aspect-ratio 635/720
+   => ~347px) — o "elemento de paragrafos" (historico + ativo + fila) tem
+   que caber exatamente ate o fim da imagem, nao mais que isso. historico e
+   o paragrafo ativo pegam a altura que precisam; a fila (flex:1) absorve
+   o que sobra e e ela quem teve o overflow+degrade — ver .analise__fila. */
 .analise__leitura {
+  grid-column: 2;
+  grid-row: 2;
+  height: 347px;
   display: flex;
   flex-direction: column;
   min-width: 0;
-}
-
-.analise__dica {
-  margin: 0 0 16px;
-  font-size: var(--text-meta);
-  color: var(--color-ink-muted);
+  overflow: hidden;
 }
 
 .analise__historico,
-.analise__topicos {
+.analise__topicos,
+.analise__fila {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -785,13 +805,21 @@ ol.article-list li::before {
   display: none;
 }
 
-/* linha do historico: um topico colapsado. Mesma largura do divisor de
-   Ferramentas (.skill-list__divider) — um traco curto, nao uma regua que
-   ocupa a coluna inteira — mas com a mesma grossura (2px) do fio que
-   destaca o paragrafo ativo, para os dois lerem como a mesma linguagem de
-   "marcador de paragrafo". Pontas arredondadas (border-radius) nos dois. */
-.analise__historico li + li {
-  margin-top: 4px;
+/* traco do historico: um topico colapsado. Mesma largura do divisor de
+   Ferramentas (.skill-list__divider) — curto, nao uma regua que ocupa a
+   coluna inteira — mas com a mesma grossura (2px) do fio que destaca o
+   paragrafo ativo, para os dois lerem como a mesma linguagem de "marcador
+   de paragrafo". Pontas arredondadas (border-radius) nos dois.
+   O espacamento entre tracos vira `gap` (nao margin colapsavel): um unico
+   numero para ajustar, sem depender de como margins vizinhas se combinam. */
+.analise__historico {
+  display: flex;
+  flex-direction: column;
+  /* reduzido a 1/3 do espacamento anterior entre tracos (16px -> 5,33px) */
+  gap: calc(16px / 3);
+  /* mantem o respiro entre o ultimo traco colapsado e o paragrafo em
+     destaque logo abaixo — esse valor nao mudou. */
+  margin-bottom: 16px;
 }
 
 .analise__historico button {
@@ -800,9 +828,7 @@ ol.article-list li::before {
   display: block;
   width: 24px;
   height: 2px;
-  /* dobrado (8px -> 16px): mais respiro entre o ultimo traco colapsado e o
-     paragrafo em destaque logo abaixo. */
-  margin: 16px 0;
+  margin: 0;
   padding: 0;
   border: 0;
   border-radius: 9999px;
@@ -825,7 +851,23 @@ ol.article-list li::before {
   background: var(--color-link);
 }
 
-.analise__topicos li + li {
+/* Fila: todos os topicos seguintes, nao so o proximo. flex:1 faz a fila
+   herdar o que sobrar de altura depois do historico e do paragrafo ativo
+   dentro dos 347px fixos de .analise__leitura — a base do calculo e o fim
+   da imagem, nao um numero fixo aqui. min-height:0 e o que permite um item
+   flex encolher abaixo do tamanho do conteudo (senao overflow:hidden nao
+   segura nada). O mask-image apaga em degrade o que nao coube, terminando
+   em opacidade zero exatamente na borda de baixo (nao um corte seco). */
+.analise__fila {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 16px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 100%);
+}
+
+.analise__fila li + li {
   margin-top: 16px;
 }
 
@@ -881,12 +923,13 @@ ol.article-list li::before {
   transform: scale(0.97);
 }
 
-/* troca de estado do bloco inteiro (historico + topicos): sai e entra com o
-   mesmo par blur+opacidade+translateY do resto do site. O reflow acontece
-   enquanto o bloco esta velado (classe no proprio .analise), entao a
-   mudanca de altura nao pisca. */
+/* troca de estado do bloco inteiro (historico + topicos + fila): sai e
+   entra com o mesmo par blur+opacidade+translateY do resto do site. O
+   reflow acontece enquanto o bloco esta velado (classe no proprio
+   .analise), entao a mudanca de altura nao pisca. */
 .analise__historico,
-.analise__topicos {
+.analise__topicos,
+.analise__fila {
   opacity: 1;
   filter: none;
   transform: none;
@@ -894,7 +937,8 @@ ol.article-list li::before {
 }
 
 .analise.is-veiled .analise__historico,
-.analise.is-veiled .analise__topicos {
+.analise.is-veiled .analise__topicos,
+.analise.is-veiled .analise__fila {
   opacity: 0;
   filter: blur(12px);
   transform: translateY(8px);
@@ -904,6 +948,15 @@ ol.article-list li::before {
   .analise {
     width: 100%;
     grid-template-columns: 1fr;
+  }
+
+  /* uma coluna so: volta ao posicionamento automatico (ordem do HTML —
+     dica, viewer, leitura) em vez das linhas/colunas explicitas do desktop. */
+  .analise__dica,
+  .analise__viewer,
+  .analise__leitura {
+    grid-column: 1;
+    grid-row: auto;
   }
 
   .analise__viewer {
@@ -917,7 +970,8 @@ ol.article-list li::before {
   .analise__historico button,
   .analise__item--fila button,
   .analise__historico,
-  .analise__topicos {
+  .analise__topicos,
+  .analise__fila {
     transition: none;
   }
 }

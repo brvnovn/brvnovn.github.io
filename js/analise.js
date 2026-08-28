@@ -3,10 +3,12 @@
 
   Estado = um unico indice (`cursor`), pois os topicos vivem em ordem fixa:
   tudo antes do cursor vira historico (colapsado, traco clicavel acima do
-  paragrafo em foco), o proprio cursor e o topico ativo, e o seguinte fica
-  na fila (so 2 paragrafos visiveis por vez, ativo + 1). Clicar num topico
-  da fila ou numa linha do historico so move o cursor — o resto se
-  recalcula sozinho.
+  paragrafo em foco), o proprio cursor e o topico ativo (sempre totalmente
+  visivel, fora do recorte), e todos os seguintes vao para a fila — o CSS
+  (max-height + mask-image, ver .analise__fila) e que decide quantos cabem
+  antes do limite da altura da foto, com um degrade apagando o resto.
+  Clicar num topico da fila ou numa linha do historico so move o cursor —
+  o resto se recalcula sozinho.
 
   Comeca com cursor = 0: o primeiro topico ja em destaque, sem historico.
 */
@@ -28,6 +30,7 @@
   const shots = Array.from(root.querySelectorAll(".analise__shot"));
   const historicoEl = root.querySelector("[data-historico]");
   const topicosEl = root.querySelector("[data-topicos]");
+  const filaEl = root.querySelector("[data-fila]");
 
   let cursor = 0;
   let currentShot = topics.find((topic) => topic.shot)?.shot || null;
@@ -63,11 +66,14 @@
     activeLi.appendChild(p);
     topicosEl.appendChild(activeLi);
 
-    topics.slice(cursor + 1, cursor + 2).forEach((topic) => {
+    // Renderiza todos os seguintes — o CSS que recorta e apaga o que passa
+    // da altura da foto (.analise__fila).
+    filaEl.innerHTML = "";
+    topics.slice(cursor + 1).forEach((topic) => {
       const li = document.createElement("li");
       li.className = "analise__item analise__item--fila";
       li.appendChild(makeButton(topic, "fila"));
-      topicosEl.appendChild(li);
+      filaEl.appendChild(li);
     });
   }
 
