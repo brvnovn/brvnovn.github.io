@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Evoluir é errar — Bruno Vieira</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <script>if(localStorage.getItem("text-scale-large")==="1"){document.documentElement.classList.add("text-large");}</script>
   <link rel="stylesheet" href="fonts/inter/inter.css">
   <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/tokens.css">
@@ -23,6 +24,15 @@
       <li><a href="https://www.linkedin.com/in/brvnovn/" target="_blank" rel="noopener">Linkedin</a></li>
       <li><a href="https://wa.me/55017981207066" target="_blank" rel="noopener">WhatsApp</a></li>
       <li><a href="mailto:uxbrunov@gmail.com">Email</a></li>
+      <li>
+        <button type="button" class="text-scale-toggle" data-text-scale-toggle aria-pressed="false" aria-label="Aumentar o tamanho do texto">
+          <svg viewBox="0 0 57 23" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path class="text-scale-toggle__a-small" d="M2.31179 18H0.34304L3.92756 7.81818H6.20455L9.79403 18H7.82528L5.10582 9.90625H5.02628L2.31179 18ZM2.37642 14.0078H7.74574V15.4893H2.37642V14.0078ZM15.6841 12.1683V13.6499H11.1003V12.1683H15.6841Z"/>
+            <path class="text-scale-toggle__divider" d="M24.6967 0.690341V22.2188H23.4183V0.690341H24.6967Z"/>
+            <path class="text-scale-toggle__a-large" d="M34.443 18H31.9118L36.5204 4.90909H39.448L44.063 18H41.5318L38.0353 7.59375H37.9331L34.443 18ZM34.5261 12.8672H41.4295V14.772H34.5261V12.8672ZM49.5458 15.9034V7.05682H51.5529V15.9034H49.5458ZM46.1261 12.4837V10.4766H54.9727V12.4837H46.1261Z"/>
+          </svg>
+        </button>
+      </li>
     </ul>
   </aside>
 
@@ -130,5 +140,6 @@
   </main>
   <script src="js/copiar-email.js" defer></script>
   <script src="js/analise.js" defer></script>
+  <script src="js/text-scale.js" defer></script>
 </body>
 </html>

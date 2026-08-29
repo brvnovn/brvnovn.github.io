@@ -70,3 +70,18 @@ literal, nao aproximado.
   --text-title: 20px;   /* h1 do nome (home e curriculo) */
   --text-display: 24px; /* h1 do artigo */
 }
+
+/* Modo de texto grande (acessibilidade, tarefa 29): sobe um degrau inteiro
+   na mesma escada de 4px, em vez de multiplicar por um fator solto — o
+   corpo (14px) sobe para 18px, a mesma excecao fora da escala de 4 que ja
+   era hoje. +-29% no corpo, dentro da faixa que a WCAG e a literatura de
+   acessibilidade recomendam para um botao de "texto grande" de um clique
+   (a 1.4.4 garante ate 200% via zoom do navegador; isso aqui e complementar,
+   nao substitui). A classe entra no <html> via js/text-scale.js. */
+html.text-large {
+  --text-meta: 16px;
+  --text-body: 18px;
+  --text-strong: 20px;
+  --text-title: 24px;
+  --text-display: 28px;
+}
