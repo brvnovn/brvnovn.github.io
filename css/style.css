@@ -882,8 +882,11 @@ ol.article-list li::before {
     flex-basis: auto;
   }
 
+  /* no desktop os 306px casam com .analise__viewer; no mobile empilhado
+     nao ha motivo pra manter esse teto — a caixa ocupa toda a largura da
+     coluna (o aspect-ratio 635/720 cuida da altura proporcional). */
   .article-split__media {
-    max-width: 306px;
+    max-width: 100%;
   }
 }
 
@@ -1153,8 +1156,9 @@ ol.article-list li::before {
     grid-template-columns: 1fr;
   }
 
-  /* uma coluna so: volta ao posicionamento automatico (ordem do HTML —
-     dica, viewer, leitura) em vez das linhas/colunas explicitas do desktop. */
+  /* uma coluna so: cai fora das linhas/colunas explicitas do desktop. A
+     ordem visual (imagem, dica, leitura) e dada por "order", nao pela
+     ordem do HTML — a dica precisa vir depois da foto no mobile. */
   .analise__dica,
   .analise__viewer,
   .analise__leitura {
@@ -1163,7 +1167,22 @@ ol.article-list li::before {
   }
 
   .analise__viewer {
-    max-width: 306px;
+    order: 1;
+  }
+
+  .analise__dica {
+    order: 2;
+  }
+
+  .analise__leitura {
+    order: 3;
+  }
+
+  /* mesmo motivo do .article-split__media: no mobile empilhado a coluna
+     nao concorre com mais nada ao lado, entao a foto ocupa a largura
+     inteira (aspect-ratio 635/720 mantem a proporcao). */
+  .analise__viewer {
+    max-width: 100%;
   }
 }
 
