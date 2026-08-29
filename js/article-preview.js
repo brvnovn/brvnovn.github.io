@@ -26,10 +26,10 @@
   const PREVIEW_HEIGHT = 280;
   const GAP = 16;
 
-  // Meio segundo de hover antes do preview surgir — evita disparar a
+  // Um quarto de segundo de hover antes do preview surgir — evita disparar a
   // miniatura so por o mouse ter passado de raspao sobre o link. Nao muda a
   // duracao da propria animacao de entrada (0.35s, em .article-preview).
-  const HOVER_DELAY = 500;
+  const HOVER_DELAY = 250;
 
   // Mesma origem: da para injetar CSS no documento carregado assim que ele
   // termina de abrir. Sem isso o iframe mostraria o menu lateral (sempre
@@ -39,12 +39,18 @@
   // .article-preview__frame) e mais estreito que o breakpoint mobile
   // (640px) do site — sem isso o .main entraria no modo responsivo (fluido,
   // com padding lateral) em vez do layout fixo de 584px que a miniatura
-  // precisa capturar, e o recorte horizontal ficaria errado.
+  // precisa capturar, e o recorte horizontal ficaria errado. html:overflow
+  // hidden evita a barra de rolagem nativa do documento carregado — o
+  // iframe tem só 700px de altura mas a pagina real tem milhares, entao sem
+  // isso o navegador desenha a propria barra de rolagem dentro do quadro
+  // (visivel na miniatura, ainda que encolhida junto com o resto pela
+  // escala). O atributo scrolling="no" no <iframe> (index.html etc.) cobre
+  // navegadores que nao respeitam esse overflow vindo de dentro do frame.
   frame.addEventListener("load", () => {
     const doc = frame.contentDocument;
     if (!doc) return;
     const style = doc.createElement("style");
-    style.textContent = ".aside-menu{display:none} .main{width:584px!important;margin:0!important;padding-top:24px!important;padding-inline:0!important}";
+    style.textContent = "html{overflow:hidden} .aside-menu{display:none} .main{width:584px!important;margin:0!important;padding-top:24px!important;padding-inline:0!important}";
     doc.head.appendChild(style);
   });
 
