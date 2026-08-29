@@ -104,25 +104,22 @@ body {
 }
 
 /* Botao switch de texto grande (acessibilidade, tarefa 29) — ver
-   js/text-scale.js. Icone com dois "A" (referencia: refs/switch.svg), cada
-   um numa classe propria para a cor vir de token (nao do hex fixo do SVG
-   original), assim acompanha as cores do site e pode reagir ao estado. */
+   js/text-scale.js. Dois "A" em texto (nao mais o icone de refs/switch.svg,
+   que tinha os dois glifos em tamanhos diferentes) — mesmo tamanho e peso
+   dos outros itens do menu (font: inherit), so a cor muda por estado. */
 .text-scale-toggle {
   appearance: none;
   display: inline-flex;
   align-items: center;
+  gap: 4px;
   border: 0;
   background: none;
   padding: 0;
   margin: 0;
+  font: inherit;
+  font-weight: 400;
   cursor: pointer;
   transition: opacity 0.15s ease;
-}
-
-.text-scale-toggle svg {
-  height: 14px;
-  width: auto;
-  display: block;
 }
 
 .text-scale-toggle:hover,
@@ -134,24 +131,26 @@ body {
    Repouso (sem zoom): o A- (tamanho normal) fica azul, o A+ cinza.
    Ligado (zoom aplicado): inverte — o A+ fica azul, o A- cinza. */
 .text-scale-toggle__a-small {
-  fill: var(--color-link);
+  color: var(--color-link);
 }
 
 .text-scale-toggle__a-large {
-  fill: var(--color-ink-muted);
+  color: var(--color-ink-muted);
 }
 
 .text-scale-toggle[aria-pressed="true"] .text-scale-toggle__a-small {
-  fill: var(--color-ink-muted);
+  color: var(--color-ink-muted);
 }
 
 .text-scale-toggle[aria-pressed="true"] .text-scale-toggle__a-large {
-  fill: var(--color-link);
+  color: var(--color-link);
 }
 
 /* fio entre os dois "A": so um separador, nunca reage ao estado */
 .text-scale-toggle__divider {
-  fill: var(--color-border);
+  width: 1px;
+  height: 1em;
+  background: var(--color-border);
 }
 
 /* Bio / paragrafos corridos */
@@ -799,11 +798,19 @@ ol.article-list li::before {
 
 /* Rodape de artigos relacionados (fim de toda pagina de artigo): 2 colunas,
    mesma aparencia dos links da secao Artigos do index (.featured-link a +
-   .subtitle) — seta + titulo + descricao, sem miniatura. */
+   .subtitle) — seta + titulo + descricao, sem miniatura. Antecedido por um
+   ".section-label" ("Leia mais:") — a divisoria fica acima do rotulo (nao
+   do grid), ver regra abaixo. */
 .article-footer {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
+}
+
+/* :has() para nao afetar os outros usos de .section-label (index, curriculo) —
+   so o que antecede o rodape de artigos ganha o respiro/divisoria que
+   separava o corpo do texto do bloco relacionado. */
+.article-body .section-label:has(+ .article-footer) {
   margin-top: 16px;
   padding-top: 32px;
   border-top: 1px solid var(--color-divider);
