@@ -1,0 +1,20 @@
+/*
+SF Pro — variable font da Apple (developer.apple.com/fonts), subsetado para
+Latin + pontuacao geral (cobre acentos do portugues) e convertido para woff2.
+Cobre pesos 100-900 e o eixo optico (opsz) num unico arquivo, igual ao
+esquema do InterVariable em fonts/inter/inter.css.
+*/
+@font-face {
+  font-family: "SF Pro";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("SF-Pro-Variable.woff2") format("woff2");
+}
+@font-face {
+  font-family: "SF Pro";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("SF-Pro-Variable-Italic.woff2") format("woff2");
+}

@@ -55,7 +55,7 @@ literal, nao aproximado.
      derivado de --radius: a conta do raio concentrico foi abandonada. */
   --radius-inner: 4px;
 
-  --font-body: "InterVariable", system-ui, sans-serif;
+  --font-body: "SF Pro", -apple-system, system-ui, sans-serif;
 
   /* Escala tipografica, ancorada no corpo de 14px.
      Cinco degraus, cada um com uma funcao — nenhum tamanho solto fora daqui.

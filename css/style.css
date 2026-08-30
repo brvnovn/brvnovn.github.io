@@ -2,6 +2,9 @@
 body {
   font-size: var(--text-body);
   line-height: 1.6;
+  /* um degrau acima do normal (400) do peso variavel da SF Pro — pedido
+     explicito para dar mais presenca ao texto de corpo */
+  font-weight: 500;
 }
 
 /* Perfil (nome + cargo) e lista de links (Inicio/Curriculo/contato) dentro
@@ -164,6 +167,9 @@ body {
 
 .bio p {
   color: var(--color-ink);
+  text-align: justify;
+  hyphens: auto;
+  text-wrap: pretty;
 }
 
 /* Link em destaque (home) — miniatura 4:3 a esquerda + texto */
@@ -686,6 +692,16 @@ body {
   text-decoration: underline;
 }
 
+/* teste: paragrafo justificado (caixa alinhada dos dois lados) em vez do
+   alinhamento a esquerda. So no desktop — hyphens: auto evita os vaos
+   grandes entre palavras que a justificacao cria sem hifenizacao; a coluna
+   estreita do mobile piora esse efeito, entao la o texto volta a ser ragged. */
+.article-body p {
+  text-align: justify;
+  hyphens: auto;
+  text-wrap: pretty;
+}
+
 /* Listas. O recuo de 24px alinha o texto do item, e nao o marcador, com a
    margem da coluna. `ol` precisa do reset aqui porque o reset.css so zera
    `ul`. */
@@ -835,6 +851,13 @@ ol.article-list li::before {
 @media (max-width: 640px) {
   .article-footer {
     grid-template-columns: 1fr;
+  }
+
+  .article-body p,
+  .bio p,
+  .analise__item--fila button {
+    text-align: left;
+    hyphens: none;
   }
 }
 
@@ -1081,7 +1104,12 @@ ol.article-list li::before {
   padding: 0;
   margin: 0;
   font: inherit;
-  text-align: left;
+  /* mesmo alinhamento do paragrafo ativo (.analise__item--ativo p, que
+     herda o justify de .article-body p) — sem isso o topico em destaque
+     fica justificado e os da fila abaixo dele ficam com a margem direita
+     irregular, quebrando a leitura vertical da lista. */
+  text-align: justify;
+  hyphens: auto;
   color: inherit;
   cursor: pointer;
   transition: color 0.15s ease, transform 0.12s ease;
