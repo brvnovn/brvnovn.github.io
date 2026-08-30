@@ -84,11 +84,6 @@
     shots.forEach((shot) => {
       const id = shot.dataset.shot;
       shot.classList.toggle("is-active", id === currentShot);
-
-      const highlight = shot.querySelector(".analise__highlight");
-      if (highlight) {
-        highlight.classList.toggle("is-visible", active.shot === id);
-      }
     });
   }
 
@@ -107,10 +102,15 @@
   // navegador pintar o quadro velado, senao a transicao de entrada nao dispara
   // (mesmo truque do crossFade() dos cards do index, js/acervo.js).
   function transitionTo(nextCursor) {
+    startMagnetTravel(nextCursor);
     root.classList.add("is-veiled");
 
     const swap = () => {
       cursor = nextCursor;
+      // zera o fio antes de renderizar: o <li> ativo e recriado a cada
+      // render, entao o pseudo novo ja nasce em translateY(0) — sem isso
+      // ele apareceria deslocado pela distancia que acabou de percorrer.
+      endMagnetTravel();
       renderLists();
       updateShot();
       requestAnimationFrame(() => {
@@ -175,8 +175,157 @@
   // continuo do trackpad dispararia varias trocas em sequencia. Nas bordas
   // (primeiro/ultimo topico) o gesto e liberado (sem preventDefault) para a
   // pagina rolar normalmente, em vez de prender o usuario no componente.
-  const WHEEL_THRESHOLD = 240;
+  // Dobrado (era 240): o gesto pede o dobro de scroll para vencer a
+  // resistencia e trocar de topico, dando mais curso para a mola esticar.
+  const WHEEL_THRESHOLD = 480;
   let wheelAccum = 0;
+
+  // Gesto magnetico: duas variaveis CSS (ver css/style.css) descrevem o
+  // estado do fio azul a cada instante.
+  //
+  //   --magnet-slide / --magnet-stretch  as duas pontas do fio. A da frente
+  //                  avanca rumo ao destino, a de tras acompanha so uma
+  //                  fracao (TRAIL_FOLLOW) — o fio caminha e estica junto.
+  //                  Os dois valores saem do acumulo de scroll passado por
+  //                  uma curva de ease-out quadratica (MAGNET_EASE): rapido
+  //                  no inicio, cada vez mais lento perto do limiar, como
+  //                  uma mola que endurece conforme estica.
+  //   --magnet-open  abre a calha lateral onde o fio vai parar, empurrando
+  //                  pra direita so o item marcado com .is-magnet-target.
+  //                  Sempre positivo: o vao abre pra direita nos dois
+  //                  sentidos, e quem muda e o elemento marcado.
+  //
+  // MAGNET_OPEN casa com o padding-left de .analise__item--ativo (16px): no
+  // fim do gesto o proximo paragrafo ja esta na posicao horizontal que vai
+  // ocupar como ativo, entao so falta o fio chegar.
+  // STRETCH_REACH < 1 e o "quase": a ponta da frente para um pouco antes da
+  // extremidade do paragrafo que entra, em vez de encostar nela.
+  // TRAIL_FOLLOW < 1 e o que separa as duas pontas: se fosse 1 o fio so
+  // deslizaria (sem esticar); se fosse 0 so esticaria (sem sair do lugar).
+  const MAGNET_OPEN = 16;
+  const MAGNET_IDLE_MS = 150;
+  const STRETCH_REACH = 0.92;
+  const TRAIL_FOLLOW = 0.35;
+  const MAGNET_EASE = (t) => 1 - (1 - t) * (1 - t);
+  let magnetResetTimer = null;
+  let magnetTargetEl = null;
+
+  function clearMagnetResetTimer() {
+    if (magnetResetTimer === null) return;
+    window.clearTimeout(magnetResetTimer);
+    magnetResetTimer = null;
+  }
+
+  // O alvo e o <li> que esta prestes a virar ativo: um item da fila quando o
+  // gesto avanca, um traco do historico quando volta. Indexado a partir do
+  // cursor, entao vale tanto pro scroll (vizinho imediato) quanto pro clique
+  // num item distante da lista.
+  function magnetTargetFor(nextCursor) {
+    if (nextCursor > cursor) return filaEl.children[nextCursor - cursor - 1] || null;
+    if (nextCursor < cursor) return historicoEl.children[nextCursor] || null;
+    return null;
+  }
+
+  function setMagnetTarget(el) {
+    if (magnetTargetEl === el) return;
+    if (magnetTargetEl) magnetTargetEl.classList.remove("is-magnet-target");
+    magnetTargetEl = el;
+    if (magnetTargetEl) magnetTargetEl.classList.add("is-magnet-target");
+  }
+
+  // Recolhe a mola com is-dragging ja removida — e isso que faz o CSS trocar
+  // pra transicao com bounce (a mola voltando sozinha) quando o scroll para
+  // no meio do caminho e o gesto e abandonado.
+  function resetMagnet() {
+    clearMagnetResetTimer();
+    root.classList.remove("is-dragging", "is-magnet-up");
+    root.style.setProperty("--magnet-slide", "0px");
+    root.style.setProperty("--magnet-stretch", "1");
+    root.style.setProperty("--magnet-open", "0px");
+    setMagnetTarget(null);
+  }
+
+  // Geometria da mola em relacao ao topico de destino, em px:
+  //   natural  comprimento do fio em repouso (= altura do <li> ativo);
+  //   alcance  ate onde a ponta da frente pode ir — descendo, do topo do
+  //            ativo ate a base do alvo; subindo, da base do ativo ate o
+  //            topo do alvo — encurtado por STRETCH_REACH para parar antes
+  //            de encostar;
+  //   arrasto  quanto a ponta de tras pode acompanhar, uma fracao
+  //            (TRAIL_FOLLOW) do vao que a separa do alvo.
+  function magnetSpringFor(target, forward) {
+    const activeLi = topicosEl.querySelector(".analise__item--ativo");
+    const natural = activeLi ? activeLi.getBoundingClientRect().height : 0;
+    if (!activeLi || !target || natural <= 0) return null;
+
+    const active = activeLi.getBoundingClientRect();
+    const alvo = target.getBoundingClientRect();
+    const cheio = forward ? alvo.bottom - active.top : active.bottom - alvo.top;
+    const vao = forward ? alvo.top - active.top : active.bottom - alvo.bottom;
+
+    return {
+      natural,
+      alcance: natural + (cheio - natural) * STRETCH_REACH,
+      arrasto: Math.max(0, vao) * TRAIL_FOLLOW,
+    };
+  }
+
+  // Posiciona as duas pontas para um dado avanco do gesto (0 a 1, ja
+  // suavizado). O deslize e limitado a "ponta - natural" para a ponta de
+  // tras nunca alcancar a da frente: no pior caso a mola fica do tamanho
+  // natural deslizando inteira, nunca menor que isso.
+  function applyMagnet(target, forward, eased) {
+    const mola = magnetSpringFor(target, forward);
+    if (!mola) return;
+
+    const ponta = mola.natural + (mola.alcance - mola.natural) * eased;
+    const desliza = Math.min(mola.arrasto * eased, Math.max(0, ponta - mola.natural));
+    root.style.setProperty("--magnet-slide", desliza.toFixed(2) + "px");
+    root.style.setProperty("--magnet-stretch", ((ponta - desliza) / mola.natural).toFixed(4));
+    root.style.setProperty("--magnet-open", (eased * MAGNET_OPEN).toFixed(2) + "px");
+  }
+
+  function updateMagnet(accum) {
+    if (reducedMotion) return;
+    const forward = accum > 0;
+    const target = magnetTargetFor(cursor + (forward ? 1 : -1));
+
+    root.classList.add("is-dragging");
+    root.classList.toggle("is-magnet-up", !forward);
+    setMagnetTarget(target);
+
+    applyMagnet(target, forward, MAGNET_EASE(Math.min(1, Math.abs(accum) / WHEEL_THRESHOLD)));
+
+    clearMagnetResetTimer();
+    magnetResetTimer = window.setTimeout(resetMagnet, MAGNET_IDLE_MS);
+  }
+
+  // Fim do gesto: a mola completa o estiramento ate o alvo enquanto o
+  // paragrafo antigo se apaga. Nao volta pra 1 aqui — quem devolve o fio ao
+  // tamanho de repouso e a propria troca (endMagnetTravel + renderLists
+  // recriam o <li>, e o pseudo novo ja nasce no tamanho do novo paragrafo).
+  function startMagnetTravel(nextCursor) {
+    if (reducedMotion) return;
+    clearMagnetResetTimer();
+    root.classList.remove("is-dragging");
+
+    const forward = nextCursor > cursor;
+    const target = magnetTargetFor(nextCursor);
+    if (!target) return;
+
+    setMagnetTarget(target);
+    root.classList.toggle("is-magnet-up", !forward);
+    root.classList.add("is-traveling");
+    applyMagnet(target, forward, 1);
+  }
+
+  function endMagnetTravel() {
+    root.classList.remove("is-traveling", "is-magnet-up");
+    root.style.setProperty("--magnet-slide", "0px");
+    root.style.setProperty("--magnet-stretch", "1");
+    root.style.setProperty("--magnet-open", "0px");
+    setMagnetTarget(null);
+  }
 
   root.addEventListener("wheel", (event) => {
     const direction = event.deltaY > 0 ? 1 : -1;
@@ -184,6 +333,7 @@
     const atEnd = cursor === topics.length - 1 && direction > 0;
     if (atStart || atEnd) {
       wheelAccum = 0;
+      resetMagnet();
       return;
     }
 
@@ -191,9 +341,13 @@
     if (root.classList.contains("is-veiled")) return;
 
     wheelAccum += event.deltaY;
+    updateMagnet(wheelAccum);
     if (Math.abs(wheelAccum) < WHEEL_THRESHOLD) return;
 
     wheelAccum = 0;
+    // sem resetMagnet aqui: transitionTo assume o fio no ponto em que o
+    // gesto parou e o leva ate o destino (startMagnetTravel), em vez de
+    // devolve-lo a origem antes da viagem.
     transitionTo(cursor + direction);
   }, { passive: false });
 
