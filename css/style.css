@@ -2,6 +2,9 @@
 body {
   font-size: var(--text-body);
   line-height: 1.6;
+  /* um degrau acima do normal (400) do peso variavel da SF Pro — pedido
+     explicito para dar mais presenca ao texto de corpo */
+  font-weight: 500;
 }
 
 /* Perfil (nome + cargo) e lista de links (Inicio/Curriculo/contato) dentro
@@ -164,6 +167,9 @@ body {
 
 .bio p {
   color: var(--color-ink);
+  text-align: justify;
+  hyphens: auto;
+  text-wrap: pretty;
 }
 
 /* Link em destaque (home) — miniatura 4:3 a esquerda + texto */
@@ -686,6 +692,16 @@ body {
   text-decoration: underline;
 }
 
+/* teste: paragrafo justificado (caixa alinhada dos dois lados) em vez do
+   alinhamento a esquerda. So no desktop — hyphens: auto evita os vaos
+   grandes entre palavras que a justificacao cria sem hifenizacao; a coluna
+   estreita do mobile piora esse efeito, entao la o texto volta a ser ragged. */
+.article-body p {
+  text-align: justify;
+  hyphens: auto;
+  text-wrap: pretty;
+}
+
 /* Listas. O recuo de 24px alinha o texto do item, e nao o marcador, com a
    margem da coluna. `ol` precisa do reset aqui porque o reset.css so zera
    `ul`. */
@@ -836,15 +852,22 @@ ol.article-list li::before {
   .article-footer {
     grid-template-columns: 1fr;
   }
+
+  .article-body p,
+  .bio p,
+  .analise__item--fila button {
+    text-align: left;
+    hyphens: none;
+  }
 }
 
 /* Bloco estatico com duas midias lado a lado, cada uma com sua legenda
    (video do prototipo + diagrama da metodologia, artigo "Evoluir e errar").
-   Mesmo recorte das fotos do .analise (aspect-ratio 635/720, object-fit
-   cover — cada midia corta o conteudo centralizado em vez de distorcer),
-   mas dividindo os 584px da coluna em vez do tamanho fixo de 306px: as duas
-   juntas nao podem passar da largura do corpo, entao cada .article-figure
-   fica com flex:1 (280px cada, descontado o gap de 24px). */
+   Recorte proprio (aspect-ratio 635/720, object-fit cover — cada midia
+   corta o conteudo centralizado em vez de distorcer), dividindo os 584px
+   da coluna em vez do tamanho fixo de 306px: as duas juntas nao podem
+   passar da largura do corpo, entao cada .article-figure fica com flex:1
+   (280px cada, descontado o gap de 24px). */
 .article-split {
   display: flex;
   gap: 24px;
@@ -900,13 +923,13 @@ ol.article-list li::before {
 /* =====================================================================
    Componente da secao Analise (artigo "Evoluir e errar")
    Unico elemento fora do vocabulario do MODELO_ARTIGO.md: uma imagem que
-   troca conforme o topico lido ao lado, com um retangulo de destaque sobre
-   a regiao do print que o paragrafo critica. O corpo vaza a coluna do
-   artigo (584px) desde o primeiro paint — foto em 306px (85% do tamanho
-   original, o teto de reducao pedido) e coluna de texto em 406px (508px
-   menos 20%). width:max-content escapa do stretch de largura fixa herdado
-   do .article-body (flex column), que e o que faz o corpo vazar para a
-   direita.
+   troca conforme o topico lido ao lado. O destaque sobre a regiao do print
+   que o paragrafo critica ja vem embutido na propria imagem (nao e mais
+   um retangulo sobreposto via CSS). O corpo vaza a coluna do artigo (584px)
+   desde o primeiro paint — foto em 306px de largura e coluna de texto em
+   406px (508px menos 20%). width:max-content escapa do stretch de largura
+   fixa herdado do .article-body (flex column), que e o que faz o corpo
+   vazar para a direita.
    Todas as transicoes reusam o par blur+opacidade+translateY ja usado no
    crossfade dos cards (.card-layer--veiled) e no reveal (.reveal__inner);
    o clique usa a mesma reducao de 3% do .card--pressed (js/acervo.js).
@@ -937,7 +960,7 @@ ol.article-list li::before {
   grid-column: 1;
   grid-row: 2;
   position: relative;
-  aspect-ratio: 635 / 720;
+  aspect-ratio: 1230 / 2400;
   border: 1px solid var(--color-border-soft);
   border-radius: var(--radius);
   overflow: hidden;
@@ -967,31 +990,16 @@ ol.article-list li::before {
   display: block;
 }
 
-.analise__highlight {
-  position: absolute;
-  left: var(--x);
-  top: var(--y);
-  width: var(--w);
-  height: var(--h);
-  border-radius: var(--radius-inner);
-  background: var(--color-highlight);
-  opacity: 0;
-  transition: opacity 0.35s ease;
-}
-
-.analise__highlight.is-visible {
-  opacity: 1;
-}
-
-/* altura travada na altura da foto (306px de largura, aspect-ratio 635/720
-   => ~347px) — o "elemento de paragrafos" (historico + ativo + fila) tem
-   que caber exatamente ate o fim da imagem, nao mais que isso. historico e
-   o paragrafo ativo pegam a altura que precisam; a fila (flex:1) absorve
-   o que sobra e e ela quem teve o overflow+degrade — ver .analise__fila. */
+/* altura travada na altura da foto (306px de largura, aspect-ratio
+   1230/2400 => ~597px) — o "elemento de paragrafos" (historico + ativo +
+   fila) tem que caber exatamente ate o fim da imagem, nao mais que isso.
+   historico e o paragrafo ativo pegam a altura que precisam; a fila
+   (flex:1) absorve o que sobra e e ela quem teve o overflow+degrade — ver
+   .analise__fila. */
 .analise__leitura {
   grid-column: 2;
   grid-row: 2;
-  height: 347px;
+  height: 597px;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -1096,7 +1104,12 @@ ol.article-list li::before {
   padding: 0;
   margin: 0;
   font: inherit;
-  text-align: left;
+  /* mesmo alinhamento do paragrafo ativo (.analise__item--ativo p, que
+     herda o justify de .article-body p) — sem isso o topico em destaque
+     fica justificado e os da fila abaixo dele ficam com a margem direita
+     irregular, quebrando a leitura vertical da lista. */
+  text-align: justify;
+  hyphens: auto;
   color: inherit;
   cursor: pointer;
   transition: color 0.15s ease, transform 0.12s ease;
@@ -1110,15 +1123,43 @@ ol.article-list li::before {
 /* o fio azul vira um elemento proprio (pseudo) em vez de border-left: um
    border nao aceita border-radius so numa lateral sem arredondar a caixa
    inteira, e a linha precisa das pontas arredondadas, igual ao traco do
-   historico. */
-.analise__item--ativo p {
+   historico.
+   O fio mora no <li>, nao no <p>: quem recebe o veu de blur+opacidade na
+   troca e so o paragrafo que sai (ver .analise.is-veiled abaixo), e
+   opacity num pai apaga os filhos junto — com o fio dentro do <p> ele
+   sumiria em vez de descer ate o proximo topico. Separando os dois, o
+   texto apaga e o fio continua visivel viajando. */
+.analise__item--ativo {
   position: relative;
-  margin: 0;
   padding-left: 16px;
-  color: var(--color-ink);
 }
 
-.analise__item--ativo p::before {
+/* O fio se comporta como uma mola sendo puxada: as duas pontas andam, mas
+   em ritmos diferentes — a da frente avanca rumo ao topico de destino, a de
+   tras acompanha so uma fracao do caminho. Dai sai ao mesmo tempo o
+   DESLOCAMENTO (o fio inteiro caminha) e o ESTICAMENTO (a distancia entre
+   as pontas cresce). Duas variaveis, escritas por js/analise.js a partir da
+   geometria real dos dois <li>:
+     --magnet-slide   quanto a ponta de tras andou (px, sempre positivo; o
+                      sentido quem da e o CSS, ver is-magnet-up);
+     --magnet-stretch razao entre o comprimento esticado e o natural.
+   O JS limita a ponta da frente a parar pouco antes da extremidade do
+   paragrafo que entra (STRETCH_REACH) e nunca deixa o deslize comer o
+   esticamento a ponto de encurtar o fio — por construcao a mola nem passa
+   do alvo nem fica menor que o natural. Na troca o <li> e recriado e o
+   pseudo novo nasce em repouso, ou seja, "volta ao tamanho do novo".
+   A ordem translate -> scale importa: com transform-origin na ponta de
+   tras, o translate leva essa ponta ate --magnet-slide e o scale estica o
+   restante a partir dali. transform-origin troca de ponta conforme o
+   sentido: descendo a mola cresce pra baixo (ancora no topo), subindo
+   cresce pra cima (ancora no pe). Tres regimes de transicao:
+     is-dragging  nenhuma — o ease-out em JS ja da a resistencia do gesto,
+                  uma transicao CSS por cima so atrasaria a resposta;
+     is-traveling ease padrao em 0.18s (= TRANSITION_MS), o estiramento
+                  final enquanto o paragrafo antigo se apaga;
+     repouso      bezier com bounce, a mola recolhendo sozinha quando o
+                  gesto e abandonado no meio. */
+.analise__item--ativo::before {
   content: "";
   position: absolute;
   left: 0;
@@ -1127,6 +1168,45 @@ ol.article-list li::before {
   width: 2px;
   border-radius: 9999px;
   background: var(--color-link);
+  transform-origin: top center;
+  transform: translateY(var(--magnet-slide, 0px)) scaleY(var(--magnet-stretch, 1));
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.analise.is-magnet-up .analise__item--ativo::before {
+  transform-origin: bottom center;
+  transform: translateY(calc(-1 * var(--magnet-slide, 0px))) scaleY(var(--magnet-stretch, 1));
+}
+
+.analise__item--ativo p {
+  margin: 0;
+  color: var(--color-ink);
+}
+
+/* Abertura da calha do fio: o paragrafo ativo tem padding-left:16px, que e
+   exatamente o vao onde o fio azul mora; os itens da fila e os tracos do
+   historico comecam colados no zero. Sem abrir esse vao antes da troca, o
+   fio desce e esbarra no proximo paragrafo — nao ha para onde ele ir.
+   Quem recebe o deslocamento e so o item marcado com .is-magnet-target por
+   js/analise.js (o proximo da fila, ou o ultimo traco do historico se o
+   gesto for pra tras) — os demais ficam parados, e o proximo paragrafo que
+   sai da frente, nao a lista inteira. --magnet-open e sempre positivo (o
+   vao abre pra direita nos dois sentidos) e vai ate 16px, encaixando com o
+   padding que o item vai herdar ao virar ativo: no fim do gesto o texto ja
+   esta na posicao final e so o fio precisa chegar. */
+.analise .is-magnet-target {
+  transform: translateX(var(--magnet-open, 0px));
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.analise.is-dragging .analise__item--ativo::before,
+.analise.is-dragging .is-magnet-target {
+  transition: none;
+}
+
+.analise.is-traveling .analise__item--ativo::before,
+.analise.is-traveling .is-magnet-target {
+  transition: transform 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* redução de 3% no clique, espelhando .card--pressed (js/acervo.js) */
@@ -1135,23 +1215,19 @@ ol.article-list li::before {
   transform: scale(0.97);
 }
 
-/* troca de estado do bloco inteiro (historico + topicos + fila): sai e
-   entra com blur+opacidade+deslocamento, em 0.18s — mais rapido que o
-   crossfade padrao do site (0.35s), para a resposta ao clique ficar mais
-   direta. O reflow acontece enquanto o bloco esta velado (classe no
-   proprio .analise), entao a mudanca de altura nao pisca. */
-.analise__historico,
-.analise__topicos,
-.analise__fila {
+/* troca de estado: o veu de blur+opacidade+deslocamento (0.18s, mais
+   rapido que o crossfade padrao do site de 0.35s) fica so no paragrafo que
+   esta saindo — nao no bloco inteiro. O que se apaga e o texto do topico
+   que deixa de ser ativo; o fio azul, que vive no <li> e nao no <p>, segue
+   visivel descendo ate o proximo topico durante esse mesmo intervalo. */
+.analise__item--ativo p {
   opacity: 1;
   filter: none;
   transform: none;
   transition: opacity 0.18s ease, filter 0.18s ease, transform 0.18s ease;
 }
 
-.analise.is-veiled .analise__historico,
-.analise.is-veiled .analise__topicos,
-.analise.is-veiled .analise__fila {
+.analise.is-veiled .analise__item--ativo p {
   opacity: 0;
   filter: blur(12px);
   transform: translateY(8px);
@@ -1185,22 +1261,34 @@ ol.article-list li::before {
     order: 3;
   }
 
-  /* mesmo motivo do .article-split__media: no mobile empilhado a coluna
-     nao concorre com mais nada ao lado, entao a foto ocupa a largura
-     inteira (aspect-ratio 635/720 mantem a proporcao). */
+  /* diferente do .article-split__media, a foto do .analise agora e bem
+     mais alta que larga (aspect-ratio 1230/2400) — deixa-la ocupar a
+     largura inteira da coluna faria a caixa passar de 600px de altura no
+     mobile. Trava em 306px, centralizada, e a leitura volta a uma altura
+     fixa menor (nao precisa mais casar com o fim da foto).
+     width (nao max-width): dentro de uma linha de grid "auto" (coluna
+     1fr), max-width so limita um stretch que nunca chega a se resolver —
+     sem largura definida o navegador nao consegue calcular a altura via
+     aspect-ratio antes de dimensionar a linha, e a caixa colapsa perto de
+     0px. width:min(...) da um valor definido de largura, que resolve o
+     aspect-ratio normalmente. */
   .analise__viewer {
-    max-width: 100%;
+    width: min(100%, 306px);
+    margin: 0 auto;
+  }
+
+  .analise__leitura {
+    height: 347px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .analise__shot,
-  .analise__highlight,
   .analise__historico button,
   .analise__item--fila button,
-  .analise__historico,
-  .analise__topicos,
-  .analise__fila {
+  .analise__item--ativo p,
+  .analise__item--ativo::before,
+  .analise .is-magnet-target {
     transition: none;
   }
 }
