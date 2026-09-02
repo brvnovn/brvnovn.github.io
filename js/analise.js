@@ -31,9 +31,21 @@
   const historicoEl = root.querySelector("[data-historico]");
   const topicosEl = root.querySelector("[data-topicos]");
   const filaEl = root.querySelector("[data-fila]");
+  const restartEl = root.querySelector("[data-restart]");
 
   let cursor = 0;
-  let currentShot = topics.find((topic) => topic.shot)?.shot || null;
+
+  // Nem todo topico declara data-shot: os que nao declaram reaproveitam a
+  // foto do topico anterior mais proximo que declarou. Buscar sempre pra
+  // tras (em vez de acumular um "ultimo shot visto" a cada updateShot)
+  // acerta tambem em saltos diretos — clique num item distante da fila ou
+  // do historico — que um acumulo incremental erraria.
+  function shotFor(index) {
+    for (let i = index; i >= 0; i--) {
+      if (topics[i].shot) return topics[i].shot;
+    }
+    return null;
+  }
 
   // "historico" e o mesmo traco de 24px, sem texto; so "fila" mostra o texto.
   function makeButton(topic, variant) {
@@ -75,16 +87,42 @@
       li.appendChild(makeButton(topic, "fila"));
       filaEl.appendChild(li);
     });
+
+    // Ultimo topico: nao ha mais o que avancar (fila fica vazia), entao um
+    // botao reinicia o carrossel do zero. Vive num slot proprio (nao dentro
+    // do <li> ativo) para nao entrar no vao reservado aos paragrafos —
+    // .analise__restart-slot e quem abre o mesmo respiro de 16px que
+    // separa o historico dos paragrafos, so que abaixo. Reaproveita
+    // selectTopic com o primeiro topico — mesma animacao de contracao do
+    // resto dos botoes do componente, so troca o alvo do clique.
+    restartEl.innerHTML = "";
+    if (cursor === topics.length - 1) {
+      const restart = document.createElement("button");
+      restart.type = "button";
+      restart.className = "analise__restart";
+      restart.setAttribute("aria-label", "Reiniciar carrossel");
+      restart.textContent = "↺";
+      restart.addEventListener("click", () => selectTopic(topics[0], restart));
+      restartEl.appendChild(restart);
+    }
   }
 
   function updateShot() {
-    const active = topics[cursor];
-    if (active.shot) currentShot = active.shot;
-
+    const shotId = shotFor(cursor);
     shots.forEach((shot) => {
-      const id = shot.dataset.shot;
-      shot.classList.toggle("is-active", id === currentShot);
+      shot.classList.toggle("is-active", shot.dataset.shot === shotId);
     });
+  }
+
+  // Quando o proximo topico reaproveita a mesma foto, o toggle acima nao
+  // muda nada (a classe ja esta certa) e o fade nunca dispara — a imagem
+  // fica parada enquanto o paragrafo troca ao lado. Tirar is-active aqui,
+  // antes do veu, apaga a foto por conta propria; o updateShot() do swap()
+  // (180ms depois, ja fora deste tick) devolve a classe e ela reaparece —
+  // um pulso de fade mesmo sem troca real de imagem.
+  function reflashShot(id) {
+    const shot = shots.find((el) => el.dataset.shot === id);
+    if (shot) shot.classList.remove("is-active");
   }
 
   // Espelha a duracao de opacity/filter/transform definida em
@@ -102,6 +140,11 @@
   // navegador pintar o quadro velado, senao a transicao de entrada nao dispara
   // (mesmo truque do crossFade() dos cards do index, js/acervo.js).
   function transitionTo(nextCursor) {
+    if (!reducedMotion) {
+      const nextShotId = shotFor(nextCursor);
+      if (nextShotId && nextShotId === shotFor(cursor)) reflashShot(nextShotId);
+    }
+
     startMagnetTravel(nextCursor);
     root.classList.add("is-veiled");
 

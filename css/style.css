@@ -1211,8 +1211,43 @@ ol.article-list li::before {
 
 /* redução de 3% no clique, espelhando .card--pressed (js/acervo.js) */
 .analise__historico button.is-pressed,
-.analise__item--fila button.is-pressed {
+.analise__item--fila button.is-pressed,
+.analise__restart.is-pressed {
   transform: scale(0.97);
+}
+
+/* slot do botao de reiniciar: elemento proprio entre o paragrafo ativo e a
+   fila (nao dentro do <li> ativo — nao e conteudo do paragrafo). So existe
+   no ultimo topico (ver js/analise.js); :empty:display:none nos outros
+   topicos evita reservar o respiro sem ter o que mostrar. O margin-top de
+   16px repete o mesmo vao que .analise__historico abre embaixo de si,
+   entre o historico e os paragrafos — aqui e o espelho, entre o paragrafo
+   e o botao. */
+.analise__restart-slot {
+  margin-top: 16px;
+}
+
+.analise__restart-slot:empty {
+  display: none;
+  margin-top: 0;
+}
+
+/* botao de reiniciar, no mesmo estilo dos links do menu lateral
+   (.aside-menu a[href="index.html"], .cv-link) — aqui como <button> porque
+   nao navega, reinicia o estado do componente. */
+.analise__restart {
+  appearance: none;
+  display: inline-block;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--text-body);
+  font-weight: 1000;
+  color: var(--color-link);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.12s ease;
 }
 
 /* troca de estado: o veu de blur+opacidade+deslocamento (0.18s, mais
@@ -1288,7 +1323,8 @@ ol.article-list li::before {
   .analise__item--fila button,
   .analise__item--ativo p,
   .analise__item--ativo::before,
-  .analise .is-magnet-target {
+  .analise .is-magnet-target,
+  .analise__restart {
     transition: none;
   }
 }
