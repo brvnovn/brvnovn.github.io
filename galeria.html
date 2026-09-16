@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projetos — Bruno Vieira</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <script>if(localStorage.getItem("text-scale-large")==="1"){document.documentElement.classList.add("text-large");}</script>
+  <link rel="stylesheet" href="fonts/sf_pro/sf-pro.css">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <aside class="aside-menu">
+    <ul>
+      <li><a href="index.html">↩ Início</a></li>
+      <li><a class="cv-link" href="curriculum.html">Currículo ↗</a></li>
+      <li>
+        <button type="button" class="text-scale-toggle" data-text-scale-toggle aria-pressed="false" aria-label="Aumentar o tamanho do texto">
+          <span class="text-scale-toggle__a-small">A−</span>
+          <span class="text-scale-toggle__divider" aria-hidden="true"></span>
+          <span class="text-scale-toggle__a-large">A+</span>
+        </button>
+      </li>
+    </ul>
+  </aside>
+
+  <main class="main">
+    <section>
+      <div class="section-header">
+        <span class="section-label">Projetos</span>
+        <div class="carousel-nav">
+          <button type="button" class="carousel-nav__btn" data-carousel-target="acervo-carousel" data-direction="-1" aria-label="Projetos anteriores">←</button>
+          <button type="button" class="carousel-nav__btn" data-carousel-target="acervo-carousel" data-direction="1" aria-label="Próximos projetos">→</button>
+        </div>
+      </div>
+      <div class="gallery-grid" id="acervo-carousel">
+        <div class="card" data-project="3">
+          <button type="button" class="card-trigger" aria-label="Abrir Flor do Caribe Cancún - Landing Page">
+            <video class="card-cover" src="img/acervo/projeto-3.mp4" autoplay muted loop playsinline></video>
+          </button>
+          <div class="card-content" hidden>
+            <div class="card-content__media">
+              <video class="card-content__player" src="videos/fdc_lp.mp4" preload="none" controls muted playsinline></video>
+            </div>
+            <div class="card-content__info">
+              <div class="card-content__header">
+                <div class="card-content__heading">
+                  <h3 class="card-content__title">Flor do Caribe Cancún - Landing Page</h3>
+                  <span class="card-content__year">2026</span>
+                </div>
+                <button type="button" class="card-content__close" aria-label="Fechar">✕</button>
+              </div>
+              <p class="card-content__description">Landing page estratégica desenvolvida para a proliferação de leads de uma empresa de turismo e assessoria brasileira. O site teve como proposta servir como um agregador das principais informações e serviços da marca e direcionar o possível cliente ao atendimento de forma mais assertiva.</p>
+              <a class="card-content__link" href="https://flordocaribecancun.com.br" target="_blank" rel="noopener">Visite agora ↗</a>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-project="1">
+          <button type="button" class="card-trigger" aria-label="Abrir LogIA - Ensino Personalizado">
+            <video class="card-cover" src="img/acervo/projeto-1.mp4" autoplay muted loop playsinline></video>
+          </button>
+          <div class="card-content" hidden>
+            <div class="card-content__media">
+              <video class="card-content__player" src="videos/logia.mp4" preload="none" controls muted playsinline></video>
+            </div>
+            <div class="card-content__info">
+              <div class="card-content__header">
+                <div class="card-content__heading">
+                  <h3 class="card-content__title">LogIA - Ensino Personalizado</h3>
+                  <span class="card-content__year">2023</span>
+                </div>
+                <button type="button" class="card-content__close" aria-label="Fechar">✕</button>
+              </div>
+              <p class="card-content__description">Proposta de experiência e interface para uma aplicação de ensino personalizado de matemática auxiliada por inteligência artificial.</p>
+              <p class="card-content__description">Datada de um momento pré modelos LLMs, o projeto tinha como intenção especular funções para a customização e assistência a diferentes formas de aprendizado, por meio de uma interface educacional que se moldava às necessidades do aluno (abordagens visuais, descritivas ou gamificadas de ensino).</p>
+              <p class="card-content__description">Projeto de Conclusão de Curso do Bacharel em Design Gráfico (UFG).</p>
+              <a class="card-content__link" href="https://repositorio.bc.ufg.br/items/5d11560e-2910-4a99-898c-4fdaaf554609" target="_blank" rel="noopener">Saiba mais ↗</a>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-project="2">
+          <button type="button" class="card-trigger" aria-label="Abrir Função Pix - Caixa">
+            <video class="card-cover" src="img/acervo/projeto-2.mp4" autoplay muted loop playsinline></video>
+          </button>
+          <div class="card-content" hidden>
+            <div class="card-content__media">
+              <video class="card-content__player" src="videos/pix_caixa.mp4" preload="none" controls muted playsinline></video>
+            </div>
+            <div class="card-content__info">
+              <div class="card-content__header">
+                <div class="card-content__heading">
+                  <h3 class="card-content__title">Função Pix - Caixa</h3>
+                  <span class="card-content__year">2021</span>
+                </div>
+                <button type="button" class="card-content__close" aria-label="Fechar">✕</button>
+              </div>
+              <p class="card-content__description">Case desenvolvido em 2021 com a finalidade de repensar o fluxo de interação da função PIX, até então novidade como opção para pagamentos no Brasil. O foco da proposta era tornar o processo mais claro e intuitivo ao usuário da CAIXA Econômica Federal, principalmente mais velhos.</p>
+              <p class="card-content__description">Projeto para a matéria de Experiência do Usuário do curso de D. Gráfico (UFG).</p>
+              <a class="card-content__link" href="artigo-evoluir-e-errar.html">Leia minha revisão do projeto ↗</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/acervo.js" defer></script>
+  <script src="js/text-scale.js" defer></script>
+</body>
+</html>

@@ -1,9 +1,9 @@
-// Clique no link de e-mail do menu lateral: copia o endereco para a area de
+// Clique no link de e-mail da bio: copia o endereco para a area de
 // transferencia em vez de abrir o cliente de e-mail, com feedback animado
 // (crossfade fade+blur, igual ao dos cards em acervo.js) trocando o texto
 // para "copiado!" na cor de identidade. Ctrl/cmd/shift/alt-clique e clique
 // do meio preservam o mailto: nativo (abrir em nova aba, etc).
-const emailLink = document.querySelector('a[href^="mailto:"]');
+const emailLink = document.querySelector('.bio a[href^="mailto:"]');
 
 if (emailLink) {
   const email = emailLink.getAttribute("href").replace(/^mailto:/, "");
@@ -69,13 +69,12 @@ if (emailLink) {
     copyEmail().then((ok) => {
       if (!ok) return;
 
-      swapTextTo("Copiado.", true);
+      swapTextTo("Copiado", true);
 
       resetTimer = window.setTimeout(() => {
-        swapTextTo("Email", false);
+        swapTextTo("E-mail", false);
         resetTimer = null;
       }, HOLD_MS);
     });
   });
 }
-

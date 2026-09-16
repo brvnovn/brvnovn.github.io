@@ -5,59 +5,55 @@ body {
   /* um degrau acima do normal (400) do peso variavel da SF Pro — pedido
      explicito para dar mais presenca ao texto de corpo */
   font-weight: 500;
+  hyphens: none;
 }
 
-/* Perfil (nome + cargo) e lista de links (Inicio/Curriculo/contato) dentro
-   do menu lateral, em todas as paginas. */
+/* Menu lateral: so navegacao + switch de texto (perfil e contato sairam). */
 .aside-menu {
   display: flex;
   flex-direction: column;
-  /* metade do respiro de 32px que separava o perfil da lista; a outra metade
-     e o padding-top do ul, de forma que a linha entre os dois fique no meio */
-  gap: 16px;
 }
 
-/* branch teste-fundo-linha-sombra: linha da referencia separando o bloco de
-   perfil (nome + cargo) da lista de links. Fica no ul, e nao no perfil, para
-   nao passar do link mais largo: o align-self encolhe a lista ate o conteudo
-   (sem ele o ul esticaria ate a largura do aside, que e a do nome). */
 .aside-menu ul {
   align-self: flex-start;
-  padding-top: 16px;
-  border-top: 1px solid var(--color-divider);
 }
 
-.aside-profile h1 {
-  font-size: var(--text-title);
-  line-height: 1.3;
-  font-weight: 600;
-}
-
-/* Marca antes do cargo — mesmo simbolo do favicon, mas inline (nao <img src
-   favicon.svg>): o favicon.svg tem uma regra dark-mode que o deixa branco
-   quando o navegador esta no tema escuro, o que apagaria o icone aqui dentro
-   da pagina (fundo sempre claro). fill: currentColor acompanha a cor do
-   texto ao lado. Base de 0.75em (dentro da altura do texto) +15% a pedido =
-   0.8625em. */
+/* Marca ao final do nome — mesmo simbolo do favicon, mas inline (nao <img
+   src favicon.svg>): o favicon.svg tem uma regra dark-mode que o deixa
+   branco quando o navegador esta no tema escuro, o que apagaria o icone
+   aqui. fill: currentColor acompanha a cor do texto. Base 0.75em +15%. */
 .aside-brand-mark {
   height: 0.8625em;
   width: auto;
+  flex-shrink: 0;
 }
 
-.aside-profile .role {
-  display: flex;
+/* Nome + cargo no topo do main (index e curriculo). Titulos em 14px;
+   nome em negrito. Mesmo padrao tipografico do .article-header. */
+.page-intro {
+  margin-bottom: 32px;
+}
+
+.page-intro h1 {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
+  font-size: var(--text-body);
+  line-height: 1.6;
+  font-weight: 600;
+}
+
+.page-intro .role {
+  display: block;
   margin-top: 4px;
   font-size: var(--text-body);
   color: var(--color-ink-muted);
   font-weight: 400;
 }
 
-/* mesmo peso dos titulos da secao Artigos: os dois sao o mesmo tipo de
-   chamada para outra pagina, e pesos diferentes faziam um parecer menos
-   clicavel que o outro */
-.aside-menu .cv-link {
+/* Links de navegacao do menu (Curriculo, Galeria, Inicio): azul + peso 500 */
+.aside-menu .cv-link,
+.aside-menu a[href="galeria.html"] {
   color: var(--color-link);
   font-size: var(--text-body);
   font-weight: 500;
@@ -65,9 +61,8 @@ body {
   margin-left: -1px;
 }
 
-/* .aside-menu a:hover escurece para --color-ink (layout.css) — o cv-link
-   fica azul mesmo, ja que ele nao e um item de navegacao do menu. */
-.aside-menu .cv-link:hover {
+.aside-menu .cv-link:hover,
+.aside-menu a[href="galeria.html"]:hover {
   color: var(--color-link);
 }
 
@@ -89,7 +84,7 @@ body {
 }
 
 /* Texto do link de e-mail (ver js/copiar-email.js): o span anima
-   opacidade+blur no crossfade entre "Email" e "Copiado.", igual ao gesto
+   opacidade+blur no crossfade entre "E-mail" e "Copiado", igual ao gesto
    usado nos cards do acervo. is-copied fica depois de :hover para vencer o
    empate de especificidade e o azul nao ser ofuscado no hover. */
 .aside-email__label {
@@ -102,7 +97,7 @@ body {
   filter: blur(4px);
 }
 
-.aside-menu a.is-copied {
+.bio a.is-copied {
   color: var(--color-link);
 }
 
@@ -110,6 +105,11 @@ body {
    js/text-scale.js. Dois "A" em texto (nao mais o icone de refs/switch.svg,
    que tinha os dois glifos em tamanhos diferentes) — mesmo tamanho e peso
    dos outros itens do menu (font: inherit), so a cor muda por estado. */
+/* Switch A−/A+ oculto por enquanto — reativar removendo esta regra. */
+.aside-menu li:has(.text-scale-toggle) {
+  display: none;
+}
+
 .text-scale-toggle {
   appearance: none;
   display: inline-flex;
@@ -167,9 +167,13 @@ body {
 
 .bio p {
   color: var(--color-ink);
-  text-align: justify;
-  hyphens: auto;
   text-wrap: pretty;
+  hyphens: none;
+}
+
+.bio a {
+  color: var(--color-link);
+  text-decoration: none;
 }
 
 /* Link em destaque (home) — miniatura 4:3 a esquerda + texto */
@@ -253,12 +257,52 @@ body {
   color: var(--color-link);
   font-size: var(--text-body);
   font-weight: 500;
+  transition: color 0.2s ease;
 }
 
 .featured-link .subtitle {
-  margin-top: 8px;
+  margin-top: 12px;
   color: var(--color-ink-muted);
   font-size: var(--text-body);
+  transition: color 0.2s ease;
+}
+
+/* No hover de um artigo, os outros titulos perdem destaque (cinza muted). */
+@media (hover: hover) {
+  .section-articles:hover .featured-link:not(:hover) a {
+    color: var(--color-ink-muted);
+  }
+}
+
+/* Cascata de entrada no index (fade + leve subida, delay escalonado). */
+@keyframes cascade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cascade {
+  opacity: 0;
+  animation: cascade-in 0.4s ease forwards;
+}
+
+.cascade--1 { animation-delay: 0ms; }
+.cascade--2 { animation-delay: 100ms; }
+.cascade--3 { animation-delay: 200ms; }
+.cascade--4 { animation-delay: 300ms; }
+.cascade--5 { animation-delay: 400ms; }
+.cascade--6 { animation-delay: 500ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cascade {
+    opacity: 1;
+    animation: none;
+  }
 }
 
 /* Rotulo de secao (Galeria, Formacao, Cursos, Experiencia Profissional) —
@@ -268,14 +312,14 @@ body {
   color: var(--color-ink-muted);
   font-size: var(--text-body);
   font-weight: 600;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
 .section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
 .section-header .section-label {
@@ -639,27 +683,26 @@ body {
    rotulo de secao.
    ===================================================================== */
 .article-header {
-  margin-bottom: 32px;
+  margin-bottom: 48px;
 }
 
 .article-header h1 {
-  font-size: var(--text-display);
-  line-height: 1.3;
+  font-size: var(--text-body);
+  line-height: 1.6;
   font-weight: 600;
 }
 
 .article-header .subtitle {
   display: block;
-  margin-top: 8px;
+  margin-top: 6px;
   font-size: var(--text-body);
   color: var(--color-ink-muted);
 }
 
 /* Coluna flex: o espaco entre blocos vem do gap, nao de margens dos
    filhos — assim nenhum bloco precisa saber o que vem antes dele. Os
-   titulos ganham margin-top, que em flex SOMA ao gap (nao colapsa como
-   margem normal), para abrirem a secao com mais respiro do que a fecham:
-   40px acima e 24px abaixo no h2, 32/24 no h3. */
+   titulos ganham margin-top (abre a secao) e margin-bottom (+50% no
+   respiro ate o texto: gap 24 + 12 = 36px abaixo do h2). */
 .article-body {
   display: flex;
   flex-direction: column;
@@ -667,14 +710,28 @@ body {
 }
 
 .article-body h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin-top: 16px;
-  font-size: var(--text-strong);
+  margin-bottom: 12px;
+  font-size: var(--text-body);
   line-height: 1.4;
   font-weight: 600;
 }
 
+/* Trave cinza a direita do titulo ate a borda da coluna (nao abaixo). */
+.article-body h2::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  min-width: 24px;
+  background: var(--color-divider);
+}
+
 .article-body h3 {
   margin-top: 8px;
+  margin-bottom: 12px;
   font-size: var(--text-body);
   line-height: 1.4;
   font-weight: 600;
@@ -692,14 +749,9 @@ body {
   text-decoration: underline;
 }
 
-/* teste: paragrafo justificado (caixa alinhada dos dois lados) em vez do
-   alinhamento a esquerda. So no desktop — hyphens: auto evita os vaos
-   grandes entre palavras que a justificacao cria sem hifenizacao; a coluna
-   estreita do mobile piora esse efeito, entao la o texto volta a ser ragged. */
 .article-body p {
-  text-align: justify;
-  hyphens: auto;
   text-wrap: pretty;
+  hyphens: none;
 }
 
 /* Listas. O recuo de 24px alinha o texto do item, e nao o marcador, com a
@@ -828,6 +880,7 @@ ol.article-list li::before {
    separava o corpo do texto do bloco relacionado. */
 .article-body .section-label:has(+ .article-footer) {
   margin-top: 16px;
+  margin-bottom: 16px;
   padding-top: 32px;
   border-top: 1px solid var(--color-divider);
 }
@@ -851,13 +904,6 @@ ol.article-list li::before {
 @media (max-width: 640px) {
   .article-footer {
     grid-template-columns: 1fr;
-  }
-
-  .article-body p,
-  .bio p,
-  .analise__item--fila button {
-    text-align: left;
-    hyphens: none;
   }
 }
 
@@ -1104,12 +1150,7 @@ ol.article-list li::before {
   padding: 0;
   margin: 0;
   font: inherit;
-  /* mesmo alinhamento do paragrafo ativo (.analise__item--ativo p, que
-     herda o justify de .article-body p) — sem isso o topico em destaque
-     fica justificado e os da fila abaixo dele ficam com a margem direita
-     irregular, quebrando a leitura vertical da lista. */
-  text-align: justify;
-  hyphens: auto;
+  text-align: left;
   color: inherit;
   cursor: pointer;
   transition: color 0.15s ease, transform 0.12s ease;
@@ -1575,9 +1616,8 @@ ol.article-list li::before {
    W = 1528 - 2*(largura do menu ~141px) ~ 1245px. Abaixo disso o espaco
    esquerdo fica menor que o direito: o menu sai da lateral e vira um
    cabecalho acima da coluna, que segue fixa (584px) e centralizada ate o
-   mobile. Nesse cabecalho o nome/cargo fica a esquerda e os links do menu
-   ao lado direito, alinhados a borda direita da coluna (mesma largura,
-   --main-width) — so o mobile completo (<=640px) empilha os dois.
+   mobile. Sem perfil no aside, os links ocupam a faixa do cabecalho
+   alinhados a direita da coluna; so o mobile completo (<=640px) reempilha.
    Bloco isolado: acima de 1245px o desktop segue identico.
    ===================================================================== */
 @media (max-width: 1245px) {
@@ -1591,7 +1631,7 @@ ol.article-list li::before {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: 24px;
   }
 
@@ -1601,10 +1641,6 @@ ol.article-list li::before {
     justify-content: flex-end;
     gap: 8px 24px;
     margin-top: 0;
-    /* a linha divisoria (base) separava o nome da lista quando ela ficava
-       embaixo; lado a lado ela nao faz sentido */
-    padding-top: 0;
-    border-top: none;
   }
 
   /* o cabecalho ja da o respiro do topo; a coluna encosta logo abaixo dele */
@@ -1635,9 +1671,7 @@ ol.article-list li::before {
   }
 
   /* coluna fluida: o menu realinha aos 24px de padding do .main e encosta
-     um pouco mais no topo. Aqui volta a empilhar (nome em cima, links em
-     linha embaixo) — a largura da tela nao sobra para os dois lado a lado
-     como no breakpoint intermediario. */
+     um pouco mais no topo. */
   .aside-menu {
     flex-direction: column;
     align-items: normal;
@@ -1648,7 +1682,7 @@ ol.article-list li::before {
 
   .aside-menu ul {
     justify-content: flex-start;
-    margin-top: 16px;
+    margin-top: 0;
   }
 
   /* o empilhamento do card nao esta aqui: video em cima e texto embaixo
