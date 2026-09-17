@@ -8,14 +8,11 @@ body {
   hyphens: none;
 }
 
-/* Menu lateral: so navegacao + switch de texto (perfil e contato sairam). */
-.aside-menu {
-  display: flex;
-  flex-direction: column;
-}
-
-.aside-menu ul {
-  align-self: flex-start;
+/* Menu no topo: so navegacao + switch de texto (perfil e contato sairam).
+   "↩ Inicio" (quando existe) fica segregado a esquerda da coluna; o
+   restante do menu agrupa a direita (ul em width:100% no layout.css). */
+.aside-menu li:has(> a[href="index.html"]) {
+  margin-right: auto;
 }
 
 /* Marca ao final do nome — mesmo simbolo do favicon, mas inline (nao <img
@@ -855,6 +852,14 @@ ol.article-list li::before {
   text-wrap: balance;
 }
 
+/* Frase de teste de rodape (tarefa 9): antes do "Leia mais:", mesma cor e
+   tamanho da legenda sob imagens, peso do corpo, alinhada a esquerda. */
+.article-footer-note {
+  font-size: var(--text-meta);
+  font-weight: 500;
+  color: var(--color-ink-muted);
+}
+
 /* Citacao / destaque. O fio de 1px e o mesmo dos outros contornos da
    pagina; o recuo de 16px afasta o texto sem o deslocar da leitura. */
 .article-quote {
@@ -1609,51 +1614,10 @@ ol.article-list li::before {
 }
 
 /* =====================================================================
-   Menu empilhado (~1245px)
-   O menu e a coluna andam juntos com o centro da janela: o espaco a
-   ESQUERDA do menu (borda da janela -> menu) e W/2 - 528px e varia com a
-   janela; o da DIREITA (menu -> coluna) e ~95px fixos. Eles se igualam em
-   W = 1528 - 2*(largura do menu ~141px) ~ 1245px. Abaixo disso o espaco
-   esquerdo fica menor que o direito: o menu sai da lateral e vira um
-   cabecalho acima da coluna, que segue fixa (584px) e centralizada ate o
-   mobile. Sem perfil no aside, os links ocupam a faixa do cabecalho
-   alinhados a direita da coluna; so o mobile completo (<=640px) reempilha.
-   Bloco isolado: acima de 1245px o desktop segue identico.
-   ===================================================================== */
-@media (max-width: 1245px) {
-  .aside-menu {
-    position: static;
-    /* alinha o menu a borda esquerda da coluna centralizada; quando a coluna
-       vira fluida (<=640px) o max() cai para os 24px de padding do .main */
-    margin-inline: max(24px, calc(50% - var(--main-width) / 2));
-    width: var(--main-width);
-    padding-top: 48px;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: flex-end;
-    gap: 24px;
-  }
-
-  .aside-menu ul {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: 8px 24px;
-    margin-top: 0;
-  }
-
-  /* o cabecalho ja da o respiro do topo; a coluna encosta logo abaixo dele */
-  .main {
-    padding-top: 24px;
-  }
-}
-
-/* =====================================================================
    Mobile (<=640px)
    Abaixo de 640px nem a coluna cabe fixa: ela vira fluida e ocupa a largura
-   util da tela. O menu (ja empilhado desde 1245px) apenas realinha ao
-   padding da coluna.
+   util da tela. O menu (ja no topo em todo desktop) apenas reempilha e
+   realinha ao padding da coluna.
    ===================================================================== */
 @media (max-width: 640px) {
   :root {
